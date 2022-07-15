@@ -32,8 +32,7 @@ function SignInScreen({ navigation }) {
       bottom: 0,
     },
     logo: {
-      position:"absolute",
-      top: 200,
+      top: -40
     },
     inputBoxes: {
       height: 170,
@@ -45,10 +44,11 @@ function SignInScreen({ navigation }) {
       position: "absolute",
       bottom: 30,
     },
-    pageInfo: {
-      color: "grey",
-      fontSize: 10,
-      top: -15,
+    passwordForgot: {
+      marginTop: 15,
+    },
+    greyText:{
+      color:"grey",
     },
   });
 
@@ -75,8 +75,6 @@ function SignInScreen({ navigation }) {
       <MainLogo/>
       </View>
     
-      
-
       <View style={styles.inputBoxes}>
         <CustomInput
           iconName="mail"
@@ -99,6 +97,10 @@ function SignInScreen({ navigation }) {
           <Text>Sign In</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity style={styles.passwordForgot}>
+        <Text style={styles.greyText}>Forgot password?</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => navigation.navigate("Sign Up")}

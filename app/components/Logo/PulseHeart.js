@@ -7,7 +7,7 @@ function PulseHeart({size, isRotated}) {
     const pulseValue = useRef(new Animated.Value(1)).current;
     const styles = StyleSheet.create({
         pulse:{
-            transform: [{scale: pulseValue}, {rotate: (isRotated ? '-10deg': '0deg')}]
+            transform: [{scale: pulseValue}, {rotate: (isRotated ? '-8deg': '0deg')}]
         },
        
     })

@@ -51,7 +51,7 @@ function SignUpScreen({ navigation }) {
     //   1800
     // );
   };
-  
+
   //Sets section for sign up
   const section = () => {
     if (selectedSection == "user") {
@@ -127,23 +127,19 @@ function SignUpScreen({ navigation }) {
       fontSize: 10,
       top: -15,
     },
-    logo:{
-      position:"absolute",
-      top: 150,
-    }
+    logo: {
+      top: -40,
+    },
   });
 
   return (
     <View style={styles.container}>
       <View style={styles.logo}>
-      <MainLogo/>
+        <MainLogo />
       </View>
-      
+
       <LoginSwitch setSection={setSelectedSection} />
-      <Text style={styles.pageInfo}>
-        {selectedSection.charAt(0).toUpperCase() + selectedSection.slice(1)}{" "}
-        Sign Up
-      </Text>
+
       {section()}
       <TouchableOpacity
         onPress={() => navigation.goBack()}

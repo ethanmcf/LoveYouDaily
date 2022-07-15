@@ -10,7 +10,6 @@ function MainLogo(props) {
         container: {
             width: 300,
             height: 125,
-
             justifyContent:"center",
             alignItems: "center",
 
