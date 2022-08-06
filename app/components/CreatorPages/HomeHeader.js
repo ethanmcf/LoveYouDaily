@@ -23,10 +23,14 @@ function HomeHeader({}) {
     label: {
       fontSize: 10,
       color: colors.grey,
+      top: 10,
+
       fontWeight: "bold",
     },
     progressText: {
       fontSize: 25,
+      top: 10,
+
       fontWeight: "bold",
       color: colors.secondary,
       opacity: 0.7,

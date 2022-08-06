@@ -5,20 +5,22 @@ import TabBar from "./components/TabBar";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import UserScreen from "./screens/UserScreen";
-const path = "creator";
+import UserHeader from "./components/UserPage/UserHeader";
+const path = "users";
 function AppNavigator() {
   const Stack = createNativeStackNavigator();
-   if (path == "user") {
+  if (path == "user") {
     return (
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
             options={{
-              headerShown: false,
+              header: () => <UserHeader />,
             }}
             name="User"
             component={UserScreen}
           />
+
           <Stack.Screen
             options={{
               headerShown: false,
@@ -27,6 +29,7 @@ function AppNavigator() {
             name="Sign In"
             component={SignInScreen}
           />
+
           <Stack.Screen
             options={{
               headerShown: false,
@@ -42,6 +45,14 @@ function AppNavigator() {
     return (
       <NavigationContainer>
         <TabBar />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+            presentation: "transparentModal",
+          }}
+          name="Sign In"
+          component={SignInScreen}
+        />
       </NavigationContainer>
     );
   }

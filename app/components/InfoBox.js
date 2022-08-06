@@ -1,15 +1,16 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { colors, shadow } from "../common/styles";
-function InfoBox({ info, styled }) {
+function InfoBox({ info, styled, extraWidth }) {
   //Styles
   const styles = StyleSheet.create({
     container: {
-      padding: 5,
+      padding: 5 ,
       borderRadius: 6,
       backgroundColor: styled.mainColor,
-      maxWidth: 300,
+      maxWidth: 270,
       flexDirection: "row",
+
     },
 
     text: {
@@ -35,7 +36,7 @@ function InfoBox({ info, styled }) {
       borderTopColor: styled.mainColor,
       position: "absolute",
       bottom: -13,
-      left: 2,
+      left: 0,
       borderRadius: 10,
     },
   });

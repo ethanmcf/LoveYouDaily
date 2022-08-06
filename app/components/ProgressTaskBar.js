@@ -115,7 +115,7 @@ function ProgressTaskBar({ labelList, dataList, progressPercent2 }) {
     progressBarContainer: {
       height: barHeight,
       backgroundColor: fadePink,
-      width: "92%",
+      width: "91%",
       position: "absolute",
       overflow: "hidden",
       left: 15,
@@ -157,6 +157,7 @@ function ProgressTaskBar({ labelList, dataList, progressPercent2 }) {
           width: "100%",
           justifyContent: "space-between",
         }}
+        scrollEnabled={false}
         data={data}
         renderItem={({ item, index }) => {
           if (item.completed == false) {

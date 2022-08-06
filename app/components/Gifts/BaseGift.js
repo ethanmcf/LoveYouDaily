@@ -66,7 +66,7 @@ function BaseGift({
       return (
         <View style={{ position: "absolute", left: 0 }}>
           <View style={[styles.diagnolStripe, { top: -25, left: 0 }]} />
-          <View style={[styles.diagnolStripe, { top: -15, left: 25 }]} />
+          <View style={[styles.diagnolStripe, { top: -18, left: 28, borderRadius: 5 }]} />
           <View style={[styles.diagnolStripe, { top: 5, left: 40 }]} />
         </View>
       );
@@ -79,7 +79,7 @@ function BaseGift({
           <View style={[styles.baseDot, { left: 63, top: 34 }]} />
 
           <View style={[styles.baseDot, { left: 5, top: 42 }]} />
-          <View style={[styles.baseDot, { left: 32, top: 22 }]} />
+          <View style={[styles.baseDot, { left: 32, top: 22}]} />
           <View style={[styles.baseDot, { left: 40, top: 51 }]} />
         </View>
       );
@@ -162,9 +162,8 @@ function BaseGift({
     const duration = 40;
     return Animated.loop(
       Animated.sequence([
-        Animated.delay(1000),
+        Animated.delay(250),
         Animated.timing(shakeValue, {
-          delay: 500,
           toValue: 0,
           duration: duration,
           useNativeDriver: true,
@@ -200,7 +199,7 @@ function BaseGift({
         Animated.sequence([
           shakeAnimation(2),
           openAndShowAnimation(),
-          Animated.delay(20000),
+          Animated.delay(5000),
         ])
       ),
     ]);

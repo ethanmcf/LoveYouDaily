@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { colors, shadow } from "../common/styles";
 
-function ProgressPercentBar({ data}) {
+function ProgressPercentBar({data}) {
   const moveProgressBarValue = useRef(new Animated.Value(0)).current;
 
   const progressBarWidth = Dimensions.get("window").width * 0.833;
@@ -41,7 +41,7 @@ function ProgressPercentBar({ data}) {
   const styles = StyleSheet.create({
     container: {
       marginTop: 10,
-      width: "90%",
+      width: "90.2%",
       overflow: "hidden",
       borderRadius: 40,
       height: barHeight,
@@ -85,8 +85,9 @@ function ProgressPercentBar({ data}) {
           justifyContent: "space-around",
           left:20,
         }}
+        scrollEnabled={false}
         data={data}
-        renderItem={({ item, index }) => {
+        renderItem={({item}) => {
             if (item.completed) {
               return <View style={styles.circleProgressMarker} />;
             } else {

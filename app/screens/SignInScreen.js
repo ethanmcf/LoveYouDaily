@@ -5,16 +5,18 @@ import {
   TouchableOpacity,
   Text,
   Animated,
+  TouchableNativeFeedback,
+  Keyboard
 } from "react-native";
 import { useState, useRef } from "react";
 import { shadow, button, colors } from "../common/styles";
-import CustomInput from "../components/SigningPage/CustomInput";
+import CustomInput from "../components/CustomInput";
 import Check from "../components/Check";
 import MainLogo from "../components/Logo/MainLogo";
 
 function SignInScreen({ navigation }) {
-  const [emailError,setEmailError] = useState(false);
-  const [passwordError,setPasswordError] = useState(false);
+  const [emailError, setEmailError] = useState(true);
+  const [passwordError, setPasswordError] = useState(false);
 
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -32,13 +34,12 @@ function SignInScreen({ navigation }) {
       bottom: 0,
     },
     logo: {
-      top: -40
+      top: -40,
     },
     inputBoxes: {
       height: 170,
       justifyContent: "space-between",
       alignItems: "center",
-
     },
     signUpButton: {
       position: "absolute",
@@ -47,42 +48,40 @@ function SignInScreen({ navigation }) {
     passwordForgot: {
       marginTop: 15,
     },
-    greyText:{
-      color:"grey",
+    greyText: {
+      color: "grey",
     },
   });
 
   handleSignIn = () => {
+    //console.log(passwordInput);
 
+    // setEmailError(true);
+    // setPasswordError(false);
 
-
-     //console.log(passwordInput);
-
-      setEmailError(true)
-      setPasswordError(false)
-
-    
-    // setSuccessSignIn(<Check/>);
-    // setTimeout(() => [
-    //   setSuccessSignIn(null),
-    //   //navigation.navigate('Sign Up')
-    // ], 2000);
+    setSuccessSignIn(<Check />);
+    setTimeout(
+      () => [setSuccessSignIn(null), navigation.navigate("User")],
+      2000
+    );
   };
 
   return (
+    <TouchableNativeFeedback onPress={()=> Keyboard.dismiss()}>
     <View style={styles.container}>
       <View style={styles.logo}>
-      <MainLogo/>
+        <MainLogo />
       </View>
-    
+
       <View style={styles.inputBoxes}>
         <CustomInput
           iconName="mail"
           holderText="Email"
           error={emailError}
           setError={setEmailError}
-          setInput = {setEmailInput}
+          setInput={setEmailInput}
           errorInfo="The provided value for the disabled user property is inv"
+          extraWidth={50}
         />
         <CustomInput
           iconName="lock-closed"
@@ -92,8 +91,12 @@ function SignInScreen({ navigation }) {
           isPassword={true}
           setInput={setPasswordInput}
           errorInfo="The provided email is already in use by an existing user. Each user must have a unique email."
+          extraWidth={50}
         />
-        <TouchableOpacity onPress={handleSignIn} style={[shadow, button]}>
+        <TouchableOpacity
+          onPress={handleSignIn}
+          style={[shadow, button, { width: 250, height: 35 }]}
+        >
           <Text>Sign In</Text>
         </TouchableOpacity>
       </View>
@@ -111,6 +114,7 @@ function SignInScreen({ navigation }) {
 
       {successSignIn}
     </View>
+    </TouchableNativeFeedback>
   );
 }
 

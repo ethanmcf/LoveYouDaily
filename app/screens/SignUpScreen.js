@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Image, Text, TouchableOpacity, TouchableNativeFeedback, Keyboard } from "react-native";
 import { useState } from "react";
 import UserSection from "../components/SigningPage/UserSection";
 import CreaterSection from "../components/SigningPage/CreaterSection";
@@ -133,6 +133,7 @@ function SignUpScreen({ navigation }) {
   });
 
   return (
+    <TouchableNativeFeedback onPress={()=> Keyboard.dismiss()}>
     <View style={styles.container}>
       <View style={styles.logo}>
         <MainLogo />
@@ -143,12 +144,13 @@ function SignUpScreen({ navigation }) {
       {section()}
       <TouchableOpacity
         onPress={() => navigation.goBack()}
-        style={styles.signInButton}
+        style={[styles.signInButton]}
       >
         <Text>Already have an account? Sign in</Text>
       </TouchableOpacity>
       {successSignIn}
     </View>
+    </TouchableNativeFeedback>
   );
 }
 export default SignUpScreen;

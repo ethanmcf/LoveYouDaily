@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../../common/styles";
-import InfoBox from "../InfoBox";
+import { colors } from "../common/styles";
+import InfoBox from "./InfoBox";
 
 function CustomInput({
   iconName,
@@ -18,6 +18,7 @@ function CustomInput({
   isPassword,
   setInput,
   errorInfo,
+  extraWidth = 0,
 }) {
   //Animated values
   const borderAnimate = useRef(new Animated.Value(1)).current;
@@ -36,6 +37,7 @@ function CustomInput({
           <InfoBox
             info={errorInfo}
             styled={{ colorFont: "white", isBold: true, mainColor: colors.red }}
+            extraWidth={extraWidth}
           />
         </View>
       );
@@ -71,7 +73,7 @@ function CustomInput({
 
   //Returns top distance of infobox depending on length of text
   getInfoBoxTopValue = () => {
-    if (String(errorInfo).length > 56) {
+    if (String(errorInfo).length > 50) {
       return -40;
     }
     return -27;
@@ -94,13 +96,14 @@ function CustomInput({
   //Styles
   const styles = StyleSheet.create({
     container: {
-      width: 300,
+      width: 250 + extraWidth,
       height: 40,
       flexDirection: "row",
       alignItems: "center",
+      justifyContent:"center"
     },
     input: {
-      width: 300,
+      width: 200 + extraWidth,
       height: 40,
     },
     icon: {
@@ -113,7 +116,7 @@ function CustomInput({
           scaleX: borderAnimate,
         },
       ],
-      width: 300,
+      width: 225 + extraWidth,
       height: 3,
       backgroundColor: borderColor,
       position: "absolute",
@@ -125,6 +128,7 @@ function CustomInput({
     infoBox: {
       position: "absolute",
       top: getInfoBoxTopValue(),
+      left: 12
     },
   });
 

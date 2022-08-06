@@ -8,7 +8,7 @@ strokeWidth = 8;
 percentage = -100;
 color = "green";
 max = 100;
-duration = 450;
+duration = 1000;
 strokeOpacity = 0.5;
 
 //Tik
@@ -18,7 +18,7 @@ tikMax = 100;
 
 function Check(props) {
   const checkFadeValue = useRef(new Animated.Value(1)).current;
-  const checkScaleValue = useRef(new Animated.Value(1)).current;
+  const checkScaleValue = useRef(new Animated.Value(1.4)).current;
   const dimBackgroundValue = useRef(new Animated.Value(0)).current;
   const tikOpacValue = useRef(new Animated.Value(0)).current;
 
@@ -30,42 +30,25 @@ function Check(props) {
 
   const animate = (toValue) => {
     return ( 
-    Animated.parallel([
-      Animated.timing(dimBackgroundValue, {
-        toValue: 0.8,
-        duration: 800,
-        delay: 0,
-        useNativeDriver: true,
-      }).start(() => {
-        setTimeout(
-          () => 
-            Animated.parallel([
-              Animated.timing(tikOpacValue, {
-                toValue: 1,
-                duration: 0,
-                useNativeDriver: true,
-              }),
-              Animated.timing(animatedValue, {
-                toValue: toValue,
-                duration: duration,
-                useNativeDriver: true,
-              })
-            ]).start(), 350
-        );
-      }),
-      Animated.timing(checkScaleValue, {
-        toValue: 2,
-        duration: 550,
-        delay: 1600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(checkFadeValue, {
-        toValue: 0,
-        duration: 400,
-        delay: 1600,
-        useNativeDriver: true,
-      }),
-    ]).start()
+      Animated.sequence([
+        Animated.timing(dimBackgroundValue, {
+              toValue: 0.85,
+              duration: 800,
+              useNativeDriver: true,
+        }),
+        Animated.parallel([
+          Animated.timing(tikOpacValue, {
+            toValue: 1,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+          Animated.timing(animatedValue, {
+            toValue: toValue,
+            duration: duration-100,
+            useNativeDriver: true,
+          })
+        ]),
+      ]).start()
     );
   };
 

@@ -1,4 +1,4 @@
-import {useRef, useEffect, useState} from "react";
+import { useRef, useEffect, useState } from "react";
 import { View, StyleSheet, Text, Animated } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/Creator/HomeScreen";
@@ -7,8 +7,8 @@ import NotesScreen from "../screens/Creator/NotesScreen";
 import ListenScreen from "../screens/Creator/ListenScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../common/styles";
-import ProgressHeader from "./UserPage/ProgressHeader";
-import HomeHeader from "./UserPage/HomeHeader";
+import ProgressHeader from "./CreatorPages/ProgressHeader";
+import HomeHeader from "./CreatorPages/HomeHeader";
 
 const Tab = createBottomTabNavigator();
 
@@ -42,7 +42,6 @@ function TabBar(props) {
       shadowOffset: { height: 5 },
       shadowOpacity: 0.3,
       elevation: 2,
-     
     },
     tabBarIconContainer: {
       justifyContent: "center",
@@ -62,10 +61,10 @@ function TabBar(props) {
       height: 60,
       backgroundColor: colors.shadow,
       right: -30,
-      opacity: 0.6
+      opacity: 0.6,
     },
   });
- 
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -78,37 +77,7 @@ function TabBar(props) {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => tabBarIcon("home", "Home", focused),
-          header: () => <HomeHeader/>
-
-        }}
-      />
-      <Tab.Screen
-        name="Love Notes"
-        component={NotesScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (tabBarIcon("reader", "Love", focused)),
-
-          header: () => <ProgressHeader title="Love Notes" data={[
-            { completed: true },
-            { completed: true },
-            { completed: true },
-            { completed: true },
-            { completed: false },
-          ]}/>
-        }}
-      />
-      <Tab.Screen
-        name="Listen"
-        component={ListenScreen}
-        options={{
-          tabBarIcon: ({ focused }) => tabBarIcon("volume-low", "Listen", focused),
-          header: () => <ProgressHeader title="Listen" data={[
-            { completed: true },
-            { completed: true },
-            { completed: true },
-            { completed: true },
-            { completed: true },
-          ]}/>
+          header: () => <HomeHeader />,
         }}
       />
       <Tab.Screen
@@ -116,13 +85,58 @@ function TabBar(props) {
         component={LookScreen}
         options={{
           tabBarIcon: ({ focused }) => tabBarIcon("image", "Look", focused),
-          header: () => <ProgressHeader title="Look" data={[
-            { completed: true },
-            { completed: true },
-            { completed: true },
-            { completed: false },
-            { completed: false },
-          ]}/>
+          header: () => (
+            <ProgressHeader
+              title="Look"
+              data={[
+                { completed: true },
+                { completed: true },
+                { completed: true },
+                { completed: false },
+                { completed: false },
+              ]}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Love Notes"
+        component={NotesScreen}
+        options={{
+          tabBarIcon: ({ focused }) => tabBarIcon("reader", "Love", focused),
+
+          header: () => (
+            <ProgressHeader
+              title="Love Notes"
+              data={[
+                { completed: true },
+                { completed: true },
+                { completed: true },
+                { completed: true },
+                { completed: false },
+              ]}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Listen"
+        component={ListenScreen}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            tabBarIcon("volume-low", "Listen", focused),
+          header: () => (
+            <ProgressHeader
+              title="Listen"
+              data={[
+                { completed: true },
+                { completed: true },
+                { completed: true },
+                { completed: true },
+                { completed: true },
+              ]}
+            />
+          ),
         }}
       />
     </Tab.Navigator>

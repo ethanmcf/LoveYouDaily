@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { button, shadow } from "../../common/styles";
-import CustomInput from "./CustomInput";
+import CustomInput from "../CustomInput";
 
 function UserSection({ didPress, errors, setErrors, setInputs }) {
 
@@ -34,7 +34,7 @@ function UserSection({ didPress, errors, setErrors, setInputs }) {
         setInput={setInputs.code}
         errorInfo="The provided value for the disabled user property is invalid."
       />
-      <TouchableOpacity onPress={didPress} style={[shadow, button]}>
+      <TouchableOpacity onPress={didPress} style={[shadow, button, {width:250, height: 35}]}>
         <Text>Sign Up</Text>
       </TouchableOpacity>
     </View>
