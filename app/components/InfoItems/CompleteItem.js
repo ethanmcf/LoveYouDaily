@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -10,6 +10,7 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
+
 
 import BaseInfoItem from "./BaseInfoItem";
 import { button, colors, shadow } from "../../common/styles";

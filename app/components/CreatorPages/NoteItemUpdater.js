@@ -8,7 +8,9 @@ import {
   Dimensions,
   TextInput,
   TouchableNativeFeedback,
-  Keyboard
+  Keyboard,
+  KeyboardAvoidingView
+
 } from "react-native";
 import { button, colors, shadow } from "../../common/styles";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
@@ -106,6 +108,7 @@ function NoteItemUpdater({ setIsSelected, number }) {
       paddingRight: 10,
       paddingTop: 3,
       paddingBottom: 3,
+      justifyContent:"flex-start"
     },
     numberFont: {
       fontSize: 27,
@@ -140,6 +143,7 @@ function NoteItemUpdater({ setIsSelected, number }) {
 
   return (
     <TouchableNativeFeedback onPress={() => Keyboard.dismiss()}>
+      {/* <KeyboardAvoidingView behavior="padding"> */}
     <View style={styles.container}>
       <Animated.View style={[styles.background]}>
         <TouchableOpacity
@@ -156,6 +160,7 @@ function NoteItemUpdater({ setIsSelected, number }) {
             multiline={true}
             maxLength={320}
             placeholder="Enter message ..."
+            textAlignVertical="top"
           />
           <Text style={styles.charsLeft}>320 characters left</Text>
         </View>
@@ -186,6 +191,7 @@ function NoteItemUpdater({ setIsSelected, number }) {
       </Animated.View>
       
     </View>
+    {/* </KeyboardAvoidingView> */}
     </TouchableNativeFeedback>
   );
 }

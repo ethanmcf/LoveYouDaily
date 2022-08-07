@@ -77,6 +77,7 @@ function TabBar(props) {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => tabBarIcon("home", "Home", focused),
+          
           header: () => <HomeHeader />,
         }}
       />
@@ -104,7 +105,7 @@ function TabBar(props) {
         component={NotesScreen}
         options={{
           tabBarIcon: ({ focused }) => tabBarIcon("reader", "Love", focused),
-
+          tabBarHideOnKeyboard: true,
           header: () => (
             <ProgressHeader
               title="Love Notes"

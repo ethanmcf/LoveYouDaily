@@ -160,7 +160,7 @@ function ListenItemUpdater({ setIsSelected, number }) {
 
         <Text style={styles.numberFont}>{number}.</Text>
 
-        <EditableTitle index={number} type="listen" title="Listen"  />
+        <EditableTitle index={number} type="listen" title="Listen"  setShowPopUp={setShowPopUp}/>
 
         <View style={styles.recordContainer}>
           <RecordVoiceButton
