@@ -9,26 +9,17 @@ import {
   TextInput,
   TouchableNativeFeedback,
   Keyboard,
-  KeyboardAvoidingView
+
 
 } from "react-native";
 import { button, colors, shadow } from "../../common/styles";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import EditableTitle from "./EditableTitle";
 import EditTitlePopUp from "./EditTitlePopUp";
+import { translateToValue } from "../../common/values";
 
 function NoteItemUpdater({ setIsSelected, number }) {
   const translateValue = useRef(new Animated.Value(0)).current;
-  const translateToValue = () => {
-    const windowHeight = Dimensions.get("window").height;
-    const headerHeight = 140;
-    const topDistance = 15;
-    const marginBottom = 145;
-    const centerAlign = 2;
-    return (
-      windowHeight - headerHeight - marginBottom + topDistance - centerAlign
-    );
-  };
   const [showPopUp, setShowPopUp] = useState(false)
   const popUp = () => {
     if(showPopUp == true){
@@ -143,7 +134,6 @@ function NoteItemUpdater({ setIsSelected, number }) {
 
   return (
     <TouchableNativeFeedback onPress={() => Keyboard.dismiss()}>
-      {/* <KeyboardAvoidingView behavior="padding"> */}
     <View style={styles.container}>
       <Animated.View style={[styles.background]}>
         <TouchableOpacity
@@ -191,7 +181,6 @@ function NoteItemUpdater({ setIsSelected, number }) {
       </Animated.View>
       
     </View>
-    {/* </KeyboardAvoidingView> */}
     </TouchableNativeFeedback>
   );
 }

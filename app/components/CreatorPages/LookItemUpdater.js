@@ -11,6 +11,7 @@ import { button, shadow, colors } from "../../common/styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import EditableTitle from "./EditableTitle";
 import EditTitlePopUp from "./EditTitlePopUp";
+import { translateToValue } from "../../common/values";
 
 function LookItemUpdater({ setIsSelected, number }) {
   const translateValue = useRef(new Animated.Value(0)).current;
@@ -31,16 +32,6 @@ function LookItemUpdater({ setIsSelected, number }) {
         return <EditTitlePopUp title={"Title"} setShowPopUp={setShowPopUp}/>
     }
   }
-  const translateToValue = () => {
-    const windowHeight = Dimensions.get("window").height;
-    const headerHeight = 140;
-    const topDistance = 15;
-    const marginBottom = 145;
-    const centerAlign = 2;
-    return (
-      windowHeight - headerHeight - marginBottom + topDistance - centerAlign
-    );
-  };
 
   const reverseAnimation = () => {
     Animated.timing(translateValue, {

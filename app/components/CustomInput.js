@@ -15,9 +15,8 @@ function CustomInput({
   holderText,
   error,
   setError,
-  isPassword,
+  isPassword = false,
   setInput,
-  errorInfo,
   extraWidth = 0,
 }) {
   //Animated values
@@ -35,7 +34,7 @@ function CustomInput({
       return (
         <View style={styles.infoBox}>
           <InfoBox
-            info={errorInfo}
+            info={error}
             styled={{ colorFont: "white", isBold: true, mainColor: colors.red }}
             extraWidth={extraWidth}
           />
@@ -73,7 +72,7 @@ function CustomInput({
 
   //Returns top distance of infobox depending on length of text
   getInfoBoxTopValue = () => {
-    if (String(errorInfo).length > 50) {
+    if (String(error).length > 50) {
       return -40;
     }
     return -27;
@@ -136,7 +135,7 @@ function CustomInput({
     <View style={styles.container}>
       <Animated.View style={styles.iconCont}>
         <TouchableOpacity
-          disabled={!error}
+          disabled={error == null ? true : false}
           onPress={() => setShowError(!showError)}
         >
           <Ionicons style={styles.icon} name={icon} size={25} />
@@ -150,6 +149,8 @@ function CustomInput({
         style={styles.input}
         placeholder={holderText}
         secureTextEntry={isPassword}
+        autoCapitalize="none"
+        autoCorrect={false}
       />
       <Animated.View style={styles.border} />
       {theInfoBox()}

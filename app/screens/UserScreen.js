@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -14,11 +14,15 @@ import {
 import { AndroidSafeAreaStyle, colors } from "../common/styles";
 import SmallLogo from "../components/Logo/SmallLogo";
 import { Ionicons } from "@expo/vector-icons";
-
+import auth from "@react-native-firebase/auth"
 import BaseGift from "../components/Gifts/BaseGift";
 import GiftSection from "../components/UserPage/GiftSection";
+import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
+import { AppContext } from "../management/globals";
 
 function UserScreen({ navigation }) {
+  const [isSigned, setIsSigned] = useContext(AppContext)
+
   const styles = StyleSheet.create({
     background: {
       position: "absolute",
@@ -88,7 +92,7 @@ function UserScreen({ navigation }) {
       <View style={styles.buttonContainer}>
       <TouchableOpacity
         style={[styles.signOutButton, styles.specialButton]}
-        onPress={() => navigation.navigate("Sign In")}
+        onPress={() => [auth().signOut(), setIsSigned(!isSigned)]}
       >
         <Text style={styles.signOutText}>Sign Out</Text>
       </TouchableOpacity>

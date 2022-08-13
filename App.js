@@ -1,11 +1,15 @@
 import AppNavigator from "./app/AppNavigator";
 
-import React from 'react';
+import { createContext, useState } from "react";
+
+import { AppContext } from "./app/management/globals";
 
 function App() {
+  const [isSigned, setIsSigned] = useState(false);
   return (
-      <AppNavigator/>
+    <AppContext.Provider value={[isSigned, setIsSigned]}>
+      <AppNavigator />
+    </AppContext.Provider>
   );
 }
 export default App;
-

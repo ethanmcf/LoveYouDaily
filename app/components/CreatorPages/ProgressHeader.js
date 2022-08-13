@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { View, StyleSheet, Text, Animated } from "react-native";
+import { View, StyleSheet, Text, SafeAreaView, Animated } from "react-native";
 import { colors } from "../../common/styles";
 import ProgressPercentBar from "../ProgressPercentBar";
 function ProgressHeader({ title, data }) {
@@ -10,9 +10,7 @@ function ProgressHeader({ title, data }) {
       width: "100%",
       top: 0,
       backgroundColor: "white",
-      alignItems: "flex-start",
-      justifyContent: "center",
-      paddingLeft: 30,
+      justifyContent: "flex-start",
 
       paddingTop: 25,
       shadowColor: "grey",
@@ -24,22 +22,26 @@ function ProgressHeader({ title, data }) {
       fontSize: 10,
       color: colors.grey,
       fontWeight: "bold",
+      paddingLeft: 30,
     },
     progressText: {
       fontSize: 25,
       fontWeight: "bold",
       color: colors.secondary,
       opacity: 0.7,
+      paddingLeft: 30,
     },
   });
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.label}>{title} progress</Text>
       <Text style={styles.progressText}>{tasksLeft}% to complete</Text>
+      <View style={{paddingLeft: 30}}>
       <ProgressPercentBar
         data={data}
       />
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
 

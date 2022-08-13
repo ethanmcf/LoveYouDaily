@@ -1,13 +1,20 @@
-import { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { contentViewStyle, shadow } from "../../common/styles";
+import { useState, useContext } from "react";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+
 import InfoList from "../../components/CreatorPages/InfoList";
 import StartItem from "../../components/InfoItems/StartItem";
 import CompleteItem from "../../components/InfoItems/CompleteItem";
-import BaseInfoItem from "../../components/InfoItems/BaseInfoItem";
+import { MaterialIcons } from "@expo/vector-icons";
+
+import auth from "@react-native-firebase/auth"
+import { AppContext } from "../../management/globals"; 
+import { colors } from "../../common/styles";
 
 function HomeScreen(props) {
   const [itemSelected, setItemSelected] = useState(null);
+
+  const [isSigned, setIsSigned] = useContext(AppContext)
+
 
   const data = [
     { title: "Start", completed: true },
@@ -15,9 +22,6 @@ function HomeScreen(props) {
     { title: "Purchase", completed: false },
     { title: "Share", completed: false },
   ];
-
-
-
 
   const renderItems = () => {
     if (itemSelected == 0) {
@@ -33,7 +37,11 @@ function HomeScreen(props) {
     return <InfoList data={data} setIsSelected={setItemSelected} />;
   };
 
-  return renderItems();
+  return (
+    <View style={{flex:1}}>
+    {renderItems()}
+    </View>
+    );
 }
 
 export default HomeScreen;

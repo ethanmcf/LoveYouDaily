@@ -32,7 +32,7 @@ function PulseHeart({size, isRotated}) {
     
     return (
         <Animated.View style={styles.pulse}>
-            <Ionicons name="heart" size={size} color={colors.main}/>
+            <Ionicons name="heart" size={size} color={colors.secondary}/>
         </Animated.View>
     );
 }

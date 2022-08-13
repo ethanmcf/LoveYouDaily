@@ -1,3 +1,4 @@
+import { useState, useEffect, useContext} from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
@@ -6,10 +7,48 @@ import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import UserScreen from "./screens/UserScreen";
 import UserHeader from "./components/UserPage/UserHeader";
-const path = "users";
+import auth from "@react-native-firebase/auth";
+import GLOBAL from "./common/values"
+import { AppContext } from "./management/globals";
+
 function AppNavigator() {
   const Stack = createNativeStackNavigator();
-  if (path == "user") {
+  const [initializing, setInitializing] = useState(true);
+
+  const [isSigned, setIsSigned] = useContext(AppContext)
+
+  const [userState, setUserState] = useState("sign")
+
+  const uid = () => {
+    if(auth().currentUser == null){
+      return ""
+    }
+    return auth().currentUser.uid
+  }
+
+  function onStateChange(){
+    //Checks type of user or if there is a user and sets user state
+    GLOBAL.dbManager.isCreatorAccount(uid()).then(function (isCreator) {
+      if(!auth().currentUser){
+        setUserState("sign")
+      }else if(isCreator){
+        setUserState("creator")
+      }else{
+        setUserState("user")
+      }
+    })
+    if (initializing) setInitializing(false);
+  }
+  useEffect(() => {
+    onStateChange()
+  }, [isSigned]);
+
+
+  //Returns no components if connecting to firebase
+  if (initializing) return null;
+
+  //Navigates to user page if a user is signed in
+  if (userState === "user") {
     return (
       <NavigationContainer>
         <Stack.Navigator>
@@ -20,7 +59,17 @@ function AppNavigator() {
             name="User"
             component={UserScreen}
           />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 
+
+  //Navigates to signing pages if no user is signed in
+  if (userState == "sign") {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
           <Stack.Screen
             options={{
               headerShown: false,
@@ -41,7 +90,10 @@ function AppNavigator() {
         </Stack.Navigator>
       </NavigationContainer>
     );
-  } else {
+  }
+
+  //Navigates to creator pages if user is a creator
+  if (userState === "creator") {
     return (
       <NavigationContainer>
         <TabBar />

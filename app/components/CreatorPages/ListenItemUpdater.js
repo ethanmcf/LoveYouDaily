@@ -16,22 +16,13 @@ import VoiceVisualization from "../VoiceRecorder/VoiceVisualization";
 import ProgressSlider from "../ProgressSlider";
 import EditableTitle from "./EditableTitle";
 import EditTitlePopUp from "./EditTitlePopUp";
+import { translateToValue } from "../../common/values";
 
 function ListenItemUpdater({ setIsSelected, number }) {
   const maxSeconds = 10;
   const translateValue = useRef(new Animated.Value(0)).current;
   const [isRecording, setIsRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
-  const translateToValue = () => {
-    const windowHeight = Dimensions.get("window").height;
-    const headerHeight = 140;
-    const topDistance = 15;
-    const marginBottom = 145;
-    const centerAlign = 2;
-    return (
-      windowHeight - headerHeight - marginBottom + topDistance - centerAlign
-    );
-  };
   
   const [showPopUp, setShowPopUp] = useState(false)
   const popUp = () => {

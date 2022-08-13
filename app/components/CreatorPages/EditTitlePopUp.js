@@ -76,7 +76,7 @@ function EditTitlePopUp({ setShowPopUp, title }) {
       backgroundColor: "rgba(250,250,250,0.9)",
       paddingLeft: 12,
       borderRadius: 40,
-      color: colors.main,
+      color: "grey",
       fontWeight: "bold",
     },
   });
