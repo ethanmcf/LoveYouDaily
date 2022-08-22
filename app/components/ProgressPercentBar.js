@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import { colors, shadow } from "../common/styles";
 
-function ProgressPercentBar({data}) {
+function ProgressPercentBar({data, setPercent}) {
   const moveProgressBarValue = useRef(new Animated.Value(0)).current;
 
   const progressBarWidth = Dimensions.get("window").width * 0.833;
-  const progressPercent = () => {
+  const dataCount = () => {
     let total = 0;
     let completed = 0;
     for(i=0; i < data.length; i++){
@@ -22,14 +22,18 @@ function ProgressPercentBar({data}) {
         }
         total++;
     }
-    return completed/total;
+    
+    return {total: total, completed: completed, percent: completed/total};
   };
-  const translateValue = progressBarWidth * progressPercent();
+
+  const translateValue = progressBarWidth * dataCount().percent;
 
   const barHeight = 12;
   const markerHeight = 6;
 
   useEffect(() => {
+    const data = dataCount()
+    setPercent(Math.floor((1 - data.percent) * 100).toString())
     Animated.spring(moveProgressBarValue, {
       toValue: translateValue,
       friction: 3,
@@ -87,8 +91,8 @@ function ProgressPercentBar({data}) {
         }}
         scrollEnabled={false}
         data={data}
-        renderItem={({item}) => {
-            if (item.completed) {
+        renderItem={({index}) => {
+            if (index + 1 <= dataCount().completed) {
               return <View style={styles.circleProgressMarker} />;
             } else {
               return (

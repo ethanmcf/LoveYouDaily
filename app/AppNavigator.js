@@ -8,8 +8,8 @@ import SignUpScreen from "./screens/SignUpScreen";
 import UserScreen from "./screens/UserScreen";
 import UserHeader from "./components/UserPage/UserHeader";
 import auth from "@react-native-firebase/auth";
-import GLOBAL from "./common/values"
-import { AppContext } from "./management/globals";
+import { AppContext} from "./management/globals";
+import dbManager from "./management/database-manager";
 
 function AppNavigator() {
   const Stack = createNativeStackNavigator();
@@ -28,7 +28,7 @@ function AppNavigator() {
 
   function onStateChange(){
     //Checks type of user or if there is a user and sets user state
-    GLOBAL.dbManager.isCreatorAccount(uid()).then(function (isCreator) {
+    dbManager.isCreatorAccount(uid()).then(function (isCreator) {
       if(!auth().currentUser){
         setUserState("sign")
       }else if(isCreator){
@@ -39,6 +39,7 @@ function AppNavigator() {
     })
     if (initializing) setInitializing(false);
   }
+  
   useEffect(() => {
     onStateChange()
   }, [isSigned]);

@@ -1,30 +1,33 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, StyleSheet, Text, SafeAreaView, Animated } from "react-native";
 import { colors } from "../../common/styles";
 import ProgressPercentBar from "../ProgressPercentBar";
+import SignoutButton from "../SignoutButton";
+
 function ProgressHeader({ title, data }) {
-  const tasksLeft = 20;
+  const [percentToComplete, setPercentToComplete] = useState("100")
   const styles = StyleSheet.create({
     container: {
       height: 140,
       width: "100%",
       top: 0,
       backgroundColor: "white",
-      justifyContent: "flex-start",
+      justifyContent: "flex-end",
 
-      paddingTop: 25,
       shadowColor: "grey",
       shadowOffset: { height: 1 },
       shadowOpacity: 0.3,
       elevation: 2,
     },
     label: {
+      top: -25,
       fontSize: 10,
       color: colors.grey,
-      fontWeight: "bold",
       paddingLeft: 30,
+      fontWeight: "bold",
     },
     progressText: {
+      top: -25,
       fontSize: 25,
       fontWeight: "bold",
       color: colors.secondary,
@@ -35,11 +38,10 @@ function ProgressHeader({ title, data }) {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.label}>{title} progress</Text>
-      <Text style={styles.progressText}>{tasksLeft}% to complete</Text>
-      <View style={{paddingLeft: 30}}>
-      <ProgressPercentBar
-        data={data}
-      />
+      <Text style={styles.progressText}>{percentToComplete}% to complete</Text>
+
+      <View style={{ paddingLeft: 30, top: -25 }}>
+        <ProgressPercentBar data={data} setPercent={setPercentToComplete}/>
       </View>
     </SafeAreaView>
   );

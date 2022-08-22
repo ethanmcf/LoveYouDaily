@@ -15,7 +15,6 @@ import Check from "../components/Check";
 import MainLogo from "../components/Logo/MainLogo";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../management/globals";
-import GLOBAL from "../common/values"
 
 function SignInScreen({ navigation}) {
   const [emailError, setEmailError] = useState(null);

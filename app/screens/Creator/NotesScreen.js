@@ -1,26 +1,55 @@
-import {useState} from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text } from 'react-native';
-import { contentViewStyle, shadow } from "../../common/styles";
-import NoteItemUpdater from '../../components/CreatorPages/NoteItemUpdater';
-import ContentList from '../../components/CreatorPages/ContentList';
+import { useEffect, useState } from "react";
+import { View } from "react-native";
+import NoteItemUpdater from "../../components/CreatorPages/NoteItemUpdater";
+import ContentList from "../../components/CreatorPages/ContentList";
+import dbManager from "../../management/database-manager";
+import ProgressHeader from "../../components/CreatorPages/ProgressHeader";
+
 function NotesScreen(props) {
-  const [itemSelected, setItemSelected] = useState(null);
+  const [itemSelectedIndex, setItemSelected] = useState(null);
+  const [renderItem, setRenderItem] = useState(null);
+  const [data, setData] = useState(null);
 
-  const data = [
-    { number: 1 },
-    { number: 2 },
-    { number: 3 },
-    { number: 4 },
-  ];
-
-  const renderItems = () => {
-    if (itemSelected != null) {
-      return <NoteItemUpdater setIsSelected={setItemSelected} number={itemSelected}/>;
-    }
-    return <ContentList data={data} setIsSelected={setItemSelected}/>;
+  const refreshData = () => {
+    dbManager.getContent("notesContent").then((contentData) => {
+      setData(contentData)
+    });
   };
 
-  return renderItems();
+
+  useEffect(() => {
+    if (data == null) {
+      setRenderItem(null);
+      refreshData()
+    } else {
+      if (itemSelectedIndex != null) {
+        setRenderItem(
+          <View style={{ flex: 1 }}>
+            <ProgressHeader title="Love Notes" data={data} />
+            <NoteItemUpdater
+              data={data[itemSelectedIndex - 1]}
+              setIsSelected={setItemSelected}
+              number={itemSelectedIndex}
+              refreshData={refreshData}
+            />
+          </View>
+        );
+      } else {
+        setRenderItem(
+          <View style={{ flex: 1 }}>
+            <ProgressHeader title="Love Notes" data={data} />
+            <ContentList
+              data={data}
+              setIsSelected={setItemSelected}
+              setRender={setRenderItem}
+            />
+          </View>
+        );
+      }
+    }
+  }, [itemSelectedIndex, data]);
+
+  return renderItem;
 }
 
 export default NotesScreen;

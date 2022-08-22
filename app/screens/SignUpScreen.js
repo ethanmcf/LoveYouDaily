@@ -14,7 +14,7 @@ import LoginSwitch from "../components/SigningPage/LoginSwitch";
 import { colors } from "../common/styles";
 import Check from "../components/Check";
 import MainLogo from "../components/Logo/MainLogo";
-import { AppContext } from "../management/globals";
+import { AppContext} from "../management/globals";
 
 function SignUpScreen({ navigation }) {
   const [selectedSection, setSelectedSection] = useState("user");

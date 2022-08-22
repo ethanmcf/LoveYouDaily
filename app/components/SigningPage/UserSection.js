@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
 import { button, shadow } from "../../common/styles";
 import CustomInput from "../CustomInput";
 import auth from "@react-native-firebase/auth";
-import GLOBAL from "../../common/values"
+import dbManager from "../../management/database-manager";
 
 function UserSection({ setSuccessfulSignUp }) {
   const [emailInput, setEmailInput] = useState("");
@@ -19,15 +19,15 @@ function UserSection({ setSuccessfulSignUp }) {
     setPasswordError(null);
     setCodeError(null);
     
-    GLOBAL.dbManager.codeExists(codeInput).then(function (codeExists) {
+    dbManager.codeExists(codeInput).then(function (codeExists) {
       if (codeExists && codeInput.length != 0) {
         auth()
           .createUserWithEmailAndPassword(emailInput, passwordInput)
           .then(() => {
             setSuccessfulSignUp(true);
             //Adds data to database, if issue adding data delete email account
-            if(GLOBAL.dbManager.createNewUserAccount(emailInput,codeInput, auth().currentUser.uid)){
-              GLOBAL.dbManager.deleteUser(auth().currentUser)
+            if(dbManager.createNewUserAccount(emailInput,codeInput, auth().currentUser.uid)){
+              dbManager.deleteUser(auth().currentUser)
               Alert.alert(
                 "Issue",
                 "There was an issue creating your account. Make sure you are connected to internet. Please try again",

@@ -8,21 +8,104 @@ import {
   Dimensions,
 } from "react-native";
 import InfoItem from "./InfoItem";
+import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
+import { colors } from "../../common/styles";
 
-function InfoList({ data, setIsSelected, setIndex }) {
+function InfoList({ setIsSelected }) {
   const [selected, setSelected] = useState(false);
   const [indexToAnimate, setIndexToAnimate] = useState(null);
   const itemOpacityAnim = useRef(new Animated.Value(1)).current;
   const itemTranslateAnim = useRef(new Animated.Value(0)).current;
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "transparent",
+      marginLeft: 20,
+      marginRight: 20,
+      marginBottom: 115,
+      overflow: "hidden",
+    },
+    icon: {
+      position: "absolute",
+      right: 10,
+      opacity: 0.8,
+    },
+  });
+
+  const itemData = [
+    {
+      title: "Instructions",
+      message: "Click to view instructions",
+      icon: (
+        <Ionicons
+          name="information-circle-outline"
+          size={25}
+          color={colors.secondary}
+          style={styles.icon}
+        />
+      ),
+    },
+    {
+      title: "Partner Info",
+      secondTitle: " - Part 1",
+      message: "Click to choose the occasion",
+      icon: (
+        <AntDesign
+          name="form"
+          size={23}
+          color={colors.secondary}
+          style={styles.icon}
+        />
+      ),
+    },
+    {
+      title: "Partner Info",
+      secondTitle: " - Part 2",
+      message: "Click to set your partner's name",
+      icon: (
+        <AntDesign
+          name="form"
+          size={23}
+          color={colors.secondary}
+          style={styles.icon}
+        />
+      ),
+    },
+    {
+      title: "Purchase",
+      message: "Click to finalize completion",
+      icon: (
+        <Ionicons
+          name="card-outline"
+          size={25}
+          color={colors.secondary}
+          style={styles.icon}
+        />
+      ),
+    },
+    {
+      title: "Shareable Code",
+      message: "Click for code to give to your partner",
+      icon: (
+        <MaterialIcons
+          name="content-copy"
+          size={23}
+          color={colors.secondary}
+          style={styles.icon}
+        />
+      ),
+    },
+  ];
+
   let animatedValues = [];
-  data.forEach((_, i) => {
+  itemData.forEach((_, i) => {
     animatedValues[i] = new Animated.Value(0);
   });
 
   const animate = () => {
     let animations = [];
-    data.forEach((_, i) => {
+    itemData.forEach((_, i) => {
       animations[i] = Animated.timing(animatedValues[i], {
         toValue: -400,
         duration: 500,
@@ -52,26 +135,19 @@ function InfoList({ data, setIsSelected, setIndex }) {
   };
 
   useEffect(() => {
-    if (indexToAnimate != null) {
+    //Only animate if index is not 2 or 4 or null
+    if(indexToAnimate==2 || indexToAnimate==4){
+        setIndexToAnimate(null)
+        setIsSelected(indexToAnimate)
+    }else if (indexToAnimate != null) {
       animate();
     }
   }, [indexToAnimate]);
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "transparent",
-      marginLeft: 20,
-      marginRight: 20,
-      marginBottom: 115,
-      overflow: "hidden",
-    },
-  });
-
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={itemData}
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
         showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => {
@@ -92,10 +168,19 @@ function InfoList({ data, setIsSelected, setIndex }) {
               }}
             >
               <TouchableOpacity
-                onPress={() => [setSelected(true), setIndexToAnimate(index)]}
+                onPress={() => [
+                  //Disable press unless index selected is 2 or 4
+                  setSelected((index != 4 && index != 2)),
+                  setIndexToAnimate(index),
+                ]}
                 disabled={selected}
               >
-                <InfoItem title={item.title} completed={item.completed} />
+                <InfoItem
+                  title={item.title}
+                  icon={item.icon}
+                  message={item.message}
+                  secondTitle={item.secondTitle}
+                />
               </TouchableOpacity>
             </Animated.View>
           );

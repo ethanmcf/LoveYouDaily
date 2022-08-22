@@ -6,14 +6,17 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Image,
 } from "react-native";
 import { button, shadow, colors } from "../../common/styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import ImageCropPicker from "react-native-image-crop-picker";
 import EditableTitle from "./EditableTitle";
-import EditTitlePopUp from "./EditTitlePopUp";
+import EditTextPopUp from "./EditTextPopUp";
 import { translateToValue } from "../../common/values";
 
-function LookItemUpdater({ setIsSelected, number }) {
+function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
+  const [image, setImage] = useState(null);
   const translateValue = useRef(new Animated.Value(0)).current;
   const imageRatio = 1.33;
 
@@ -23,16 +26,54 @@ function LookItemUpdater({ setIsSelected, number }) {
     const ratio = (windowHeight - 140 - 2 - 145 + 15) / (windowWidth + 55);
     const height = 200 * imageRatio * ratio;
     const width = 140 * imageRatio * ratio;
-
     return { height: height, width: width };
   };
-  const [showPopUp, setShowPopUp] = useState(false)
+  const [showPopUp, setShowPopUp] = useState(false);
   const popUp = () => {
-    if(showPopUp == true){
-        return <EditTitlePopUp title={"Title"} setShowPopUp={setShowPopUp}/>
+    if (showPopUp == true) {
+      return (
+        <EditTextPopUp
+          placeholder="title"
+          title="Edit Title"
+          setShowPopUp={setShowPopUp}
+          style={{ alignSelf: "center" }}
+        />
+      );
     }
-  }
-
+  };
+  const uploadImageComp = () => {
+    return (
+      <Animated.View style={styles.uploadImageContainer}>
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          onPress={() => {
+            choosePhotoFromLibrary();
+          }}
+        >
+          <Ionicons name="cloud-upload" size={45} color={colors.main} />
+          <Text style={{ fontSize: 10, color: colors.grey }}>
+            Upload image here
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+  const imageComp = () => {
+    return (
+      <Image
+        source={{ uri: image }}
+        style={[
+          {
+            width: imageDimensions().width,
+            height: imageDimensions().height,
+            borderRadius: 15,
+            borderWidth: 2,
+            borderColor: colors.main,
+          },
+        ]}
+      />
+    );
+  };
   const reverseAnimation = () => {
     Animated.timing(translateValue, {
       toValue: -translateToValue(),
@@ -40,6 +81,16 @@ function LookItemUpdater({ setIsSelected, number }) {
       useNativeDriver: true,
     }).start(() => {
       setIsSelected(null);
+    });
+  };
+
+  const choosePhotoFromLibrary = () => {
+    ImageCropPicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then((image) => {
+      setImage(image.path);
     });
   };
 
@@ -62,7 +113,14 @@ function LookItemUpdater({ setIsSelected, number }) {
       marginBottom: 145,
       borderRadius: 15,
     },
-
+    buttonContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "absolute",
+      bottom: 25,
+      left: 25,
+    },
     background: {
       width: "95%",
       height: "95%",
@@ -82,9 +140,7 @@ function LookItemUpdater({ setIsSelected, number }) {
 
     saveButton: {
       width: 100,
-      height: 25,
-      position:"absolute",
-      bottom: 25,
+      height: 28,
     },
 
     backArrow: {
@@ -112,16 +168,17 @@ function LookItemUpdater({ setIsSelected, number }) {
       borderColor: colors.main,
       justifyContent: "center",
       alignItems: "center",
-      position: "absolute",
+      position: "relative",
       alignSelf: "center",
+      top: -7
+      
     },
 
-    clearButton:{
+    clearButton: {
       right: 25,
-      position:"absolute",
+      position: "absolute",
       bottom: 25,
     },
-
   });
 
   return (
@@ -135,34 +192,45 @@ function LookItemUpdater({ setIsSelected, number }) {
         </TouchableOpacity>
 
         <Text style={styles.numberFont}>{number}.</Text>
-        <EditableTitle index={number} type="Look" title="Looking" setShowPopUp={setShowPopUp}/>
+        <EditableTitle
+          index={number}
+          type="Look"
+          title="Looking"
+          setShowPopUp={setShowPopUp}
+        />
 
-        <Animated.View style={styles.uploadImageContainer}>
-          <TouchableOpacity style={{ alignItems: "center" }}>
-            <Ionicons name="cloud-upload" size={45} color={colors.main} />
-            <Text style={{ fontSize: 10, color: colors.grey }}>
-              Upload image here
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
-
-
-
+        {image == null ? uploadImageComp() : imageComp()}
+        <View style={styles.buttonContainer}>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={[styles.saveButton, button, shadow, { marginRight: 10 }]}
+            >
+              <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.saveButton,
                 button,
                 shadow,
-                {marginRight: 10 },
+                { backgroundColor: colors.secondary },
               ]}
+              onPress={() => {
+                handleTemplate();
+              }}
             >
-              <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
+              <Text style={{ fontSize: 12, opacity: 0.8 }}>Template</Text>
             </TouchableOpacity>
-          <TouchableOpacity style={styles.clearButton}>
-            <MaterialIcons name="clear" size={23} color={colors.red} />
-          </TouchableOpacity>
-
-              {popUp()}
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.clearButton}
+          onPress={() => {
+            setImage(null);
+          }}
+        >
+          <MaterialIcons name="clear" size={23} color={colors.red} />
+        </TouchableOpacity>
+        {popUp()}
       </Animated.View>
     </View>
   );

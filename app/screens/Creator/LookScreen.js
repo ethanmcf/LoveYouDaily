@@ -1,34 +1,55 @@
-import { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Text,
-} from "react-native";
-import { contentViewStyle, shadow } from "../../common/styles";
-import ContentList from "../../components/CreatorPages/ContentList";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
 import LookItemUpdater from "../../components/CreatorPages/LookItemUpdater";
+import ContentList from "../../components/CreatorPages/ContentList";
+import dbManager from "../../management/database-manager";
+import ProgressHeader from "../../components/CreatorPages/ProgressHeader";
 
 function LookScreen(props) {
-  const [itemSelected, setItemSelected] = useState(null);
+  const [itemSelectedIndex, setItemSelected] = useState(null);
+  const [renderItem, setRenderItem] = useState(null);
+  const [data, setData] = useState(null);
 
-  const data = [
-    { number: 1 },
-    { number: 2 },
-    { number: 3 },
-    { number: 4 },
-    { number: 5 },
-  ];
-
-  const renderItems = () => {
-    if (itemSelected != null) {
-      return <LookItemUpdater setIsSelected={setItemSelected} number={itemSelected}/>;
-    }
-    return <ContentList data={data} setIsSelected={setItemSelected}/>;
+  const refreshData = () => {
+    dbManager.getContent("lookContent").then((contentData) => {
+      setData(contentData)
+    });
   };
 
-  return renderItems();
+
+  useEffect(() => {
+    if (data == null) {
+      setRenderItem(null);
+      refreshData()
+    } else {
+      if (itemSelectedIndex != null) {
+        setRenderItem(
+          <View style={{ flex: 1 }}>
+            <ProgressHeader title="Look" data={data} />
+            <LookItemUpdater
+              data={data[itemSelectedIndex - 1]}
+              setIsSelected={setItemSelected}
+              number={itemSelectedIndex}
+              refreshData={refreshData}
+            />
+          </View>
+        );
+      } else {
+        setRenderItem(
+          <View style={{ flex: 1 }}>
+            <ProgressHeader title="Look" data={data} />
+            <ContentList
+              data={data}
+              setIsSelected={setItemSelected}
+              setRender={setRenderItem}
+            />
+          </View>
+        );
+      }
+    }
+  }, [itemSelectedIndex, data]);
+
+  return renderItem;
 }
 
 export default LookScreen;

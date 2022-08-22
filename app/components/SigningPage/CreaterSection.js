@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import CustomInput from "../CustomInput";
 import { shadow, button } from "../../common/styles";
 import auth from "@react-native-firebase/auth"
-import GLOBAL from "../../common/values"
+import dbManager from "../../management/database-manager";
 
 function CreaterSection({ setSuccessfulSignUp }) {
   const [emailInput, setEmailInput] = useState("");
@@ -35,7 +35,7 @@ function CreaterSection({ setSuccessfulSignUp }) {
       .createUserWithEmailAndPassword(emailInput, passwordInput)
       .then(() => {
         setSuccessfulSignUp(true)
-        GLOBAL.dbManager.createNewCreatorAccount(nameInput, emailInput, auth().currentUser.uid)
+        dbManager.createNewCreatorAccount(nameInput, emailInput, auth().currentUser.uid)
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {

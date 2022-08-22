@@ -18,6 +18,7 @@ function CustomInput({
   isPassword = false,
   setInput,
   extraWidth = 0,
+  style
 }) {
   //Animated values
   const borderAnimate = useRef(new Animated.Value(1)).current;
@@ -132,7 +133,7 @@ function CustomInput({
   });
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Animated.View style={styles.iconCont}>
         <TouchableOpacity
           disabled={error == null ? true : false}

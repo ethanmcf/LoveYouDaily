@@ -54,18 +54,19 @@ function UserScreen({ navigation }) {
       bottom: 30,
       alignSelf: "center",
     },
-    signOutText: {
-      color: "grey",
-    },
+  
     specialButton:{
+
       alignItems: "center",
       justifyContent: "center",
       height: 40,
-      width:"47%",
+      paddingLeft: 40,
+      paddingRight: 25,
       backgroundColor: "white",
       shadowColor: "grey",
       shadowOffset: { height: 1 },
       shadowOpacity: 0.2,
+      flexDirection: "row",
 
       borderRadius: 15,
       shadowRadius: 5,
@@ -74,7 +75,7 @@ function UserScreen({ navigation }) {
     buttonContainer: {
       marginLeft: 30,
       marginRight: 30,
-      justifyContent:"space-between",
+      justifyContent:"center",
       alignItems:"center",
       height: 40,
       bottom: 30,
@@ -82,27 +83,13 @@ function UserScreen({ navigation }) {
     },
     signOutText: {
       opacity: 0.7,
+      marginLeft: 5 
     },
   });
 
   return (
     <View style={{ flex: 1 }}>
       <GiftSection navigation={navigation} />
-
-      <View style={styles.buttonContainer}>
-      <TouchableOpacity
-        style={[styles.signOutButton, styles.specialButton]}
-        onPress={() => [auth().signOut(), setIsSigned(!isSigned)]}
-      >
-        <Text style={styles.signOutText}>Sign Out</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.signOutButton, styles.specialButton]}
-      >
-        <Text style={styles.signOutText}>Instructions</Text>
-      </TouchableOpacity>
-      </View>
     </View>
   );
 }

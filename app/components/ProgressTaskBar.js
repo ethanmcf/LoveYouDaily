@@ -20,7 +20,7 @@ function ProgressTaskBar({ labelList, dataList, progressPercent2 }) {
 
   const moveProgressBarValue = useRef(new Animated.Value(0)).current;
 
-  const progressBarWidth = Dimensions.get("window").width * 0.8;
+  const progressBarWidth = Dimensions.get("window").width * 0.8 * .9;
   const progressPercent = () => {
     let total = 0;
     let numCompleted = 0;
@@ -108,14 +108,14 @@ function ProgressTaskBar({ labelList, dataList, progressPercent2 }) {
   const styles = StyleSheet.create({
     container: {
       marginTop: 15,
-      width: "90%",
+      width: "82%",
       overflow: "hidden",
     },
 
     progressBarContainer: {
       height: barHeight,
       backgroundColor: fadePink,
-      width: "91%",
+      width: "90%",
       position: "absolute",
       overflow: "hidden",
       left: 15,

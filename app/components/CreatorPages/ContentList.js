@@ -8,22 +8,11 @@ import {
   Dimensions,
 } from "react-native";
 import ListItem from "./ListItem";
-function ContentList({ data, setIsSelected, setIndex }) {
+function ContentList({ data, setIsSelected, setRender }) {
   const [selected, setSelected] = useState(false);
   const [indexToAnimate, setIndexToAnimate] = useState(null);
   const itemOpacityAnim = useRef(new Animated.Value(1)).current;
   const itemTranslateAnim = useRef(new Animated.Value(0)).current;
-
-  const translateToValue = () => {
-    const windowHeight = Dimensions.get("window").height;
-    const headerHeight = 140;
-    const topDistance = 15;
-    const marginBottom = 145;
-    const centerAlign = 2;
-    return (
-      windowHeight - headerHeight - marginBottom + topDistance - centerAlign
-    );
-  };
 
   let animatedValues = [];
   data.forEach((_, i) => {
@@ -42,7 +31,6 @@ function ContentList({ data, setIsSelected, setIndex }) {
 
     Animated.sequence([
       Animated.stagger(75, animations),
-
       Animated.parallel([
         Animated.timing(itemTranslateAnim, {
           toValue: 200,
@@ -57,8 +45,10 @@ function ContentList({ data, setIsSelected, setIndex }) {
       ]),
     ]).start(() => {
       const number = indexToAnimate + 1;
+      
       setIndexToAnimate(null);
       setIsSelected(number);
+      setRender(null)
     });
   };
 
@@ -86,6 +76,7 @@ function ContentList({ data, setIsSelected, setIndex }) {
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
         showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => {
+
           return (
             <Animated.View
               key={index}
@@ -106,7 +97,7 @@ function ContentList({ data, setIsSelected, setIndex }) {
                 onPress={() => [setSelected(true), setIndexToAnimate(index), ]}
                 disabled={selected}
               >
-                <ListItem number={item.number} />
+                <ListItem number={item.number} title={item.title} completed={item.completed} description={item.content}/>
               </TouchableOpacity>
             </Animated.View>
           );

@@ -13,7 +13,3 @@ export const translateToValue = () => {
       windowHeight - headerHeight - marginBottom + topDistance - centerAlign + platformPadding
     );
   };
-
-module.exports = {
-  dbManager: new DatabaseManager(),
-}

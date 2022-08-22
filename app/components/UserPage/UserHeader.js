@@ -1,5 +1,6 @@
 import {useEffect, useRef} from "react";
-import { View, StyleSheet, Text, FlatList, Dimensions } from "react-native";
+import { View, StyleSheet, Text, FlatList, Dimensions, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, shadow } from "../../common/styles";
 import DayBubble from "./DayBubble";
 
@@ -81,6 +82,7 @@ function UserHeader(props) {
   return (
     <View style={[styles.container]}>
       <Text style={styles.label}>Happy anniversary,</Text>
+      
       <Text style={styles.progressText}>Danielle Sacks</Text>
       <Text style={styles.dayText}>Day:</Text>
       <FlatList
@@ -102,6 +104,10 @@ function UserHeader(props) {
         horizontal={true}
         style={styles.dayList}
       />
+      
+      <TouchableOpacity style={{position:"absolute", right: 8, top: 53, justifyContent:"center", alignItems:"center"}}>
+        <Ionicons name="settings" size={25} color={colors.secondary} style={{opacity: 0.9}}/>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -1,47 +1,87 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import InfoList from "../../components/CreatorPages/InfoList";
 import StartItem from "../../components/InfoItems/StartItem";
-import CompleteItem from "../../components/InfoItems/CompleteItem";
-import { MaterialIcons } from "@expo/vector-icons";
+import PartnerItem from "../../components/InfoItems/PartnerItem";
 
-import auth from "@react-native-firebase/auth"
-import { AppContext } from "../../management/globals"; 
-import { colors } from "../../common/styles";
+import EditTextPopUp from "../../components/CreatorPages/EditTextPopUp";
+import dbManager from "../../management/database-manager";
+import ShareCodePopUp from "../../components/CreatorPages/ShareCodePopUp";
 
 function HomeScreen(props) {
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("error");
+
+  const [showNamePopUp, setShowNamePopUp] = useState(false);
+  const [showCodePopUp, setShowCodePopUp] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
-
-  const [isSigned, setIsSigned] = useContext(AppContext)
-
-
-  const data = [
-    { title: "Start", completed: true },
-    { title: "Complete", completed: true },
-    { title: "Purchase", completed: false },
-    { title: "Share", completed: false },
-  ];
-
   const renderItems = () => {
     if (itemSelected == 0) {
-      return <StartItem title="Start" height={200} setIsSelected={setItemSelected}/>;
+      return (
+        <StartItem title="Start" height={200} setIsSelected={setItemSelected} />
+      );
     } else if (itemSelected == 1) {
-      return <CompleteItem setIsSelected={setItemSelected}/>
-    } else if (itemSelected == 2) {
-      return <InfoContainer message="cool" setIsSelected={setItemSelected} />;
+      return <PartnerItem setIsSelected={setItemSelected} />;
     } else if (itemSelected == 3) {
       return <InfoContainer message="cool" setIsSelected={setItemSelected} />;
+    } else {
+      return <InfoList setIsSelected={setItemSelected} />;
     }
-
-    return <InfoList data={data} setIsSelected={setItemSelected} />;
   };
 
+  handleNameUpdate = (name) => {
+    dbManager.setPartnerName(name)
+  };
+
+  useEffect(() => {
+    if (!showNamePopUp) {
+      setItemSelected(null);
+    }
+  }, [showNamePopUp]);
+
+  useEffect(() => {
+    if (!showCodePopUp) {
+      setItemSelected(null);
+    }
+  }, [showCodePopUp]);
+
+  useEffect(() => {
+    if (itemSelected == 2) {
+      dbManager.getPartnerName().then((name) => {
+        setName(name);
+        setShowNamePopUp(true);
+      });
+    } else if (itemSelected == 4) {
+      dbManager.getCode().then((theCode) => {
+        setCode(theCode)
+        setShowCodePopUp(true);
+      })
+      
+    }
+  }, [itemSelected]);
+
   return (
-    <View style={{flex:1}}>
-    {renderItems()}
+    <View style={{ flex: 1 }}>
+      {renderItems()}
+      {showNamePopUp ? (
+        <EditTextPopUp
+          saveFunc={handleNameUpdate}
+          placeholder={name}
+          title="Patner's Name"
+          setShowPopUp={setShowNamePopUp}
+          style={{ alignSelf: "center" }}
+        />
+      ) : null}
+      {showCodePopUp ? (
+        <ShareCodePopUp
+          code={code}
+          setShowPopUp={setShowCodePopUp}
+          style={{ alignSelf: "center" }}
+        />
+      ) : null}
     </View>
-    );
+  );
 }
 
 export default HomeScreen;

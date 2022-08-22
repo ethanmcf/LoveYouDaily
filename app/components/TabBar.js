@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../common/styles";
 import ProgressHeader from "./CreatorPages/ProgressHeader";
 import HomeHeader from "./CreatorPages/HomeHeader";
+import dbManager from "../management/database-manager";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,6 +30,11 @@ function TabBar(props) {
     );
   };
 
+  const data = () => {
+    dbManager.getContent("notesContent").then((data) => {
+      return data
+    })
+  }
   const styles = StyleSheet.create({
     container: {
       position: "absolute",
@@ -86,18 +92,8 @@ function TabBar(props) {
         component={LookScreen}
         options={{
           tabBarIcon: ({ focused }) => tabBarIcon("image", "Look", focused),
-          header: () => (
-            <ProgressHeader
-              title="Look"
-              data={[
-                { completed: true },
-                { completed: true },
-                { completed: true },
-                { completed: false },
-                { completed: false },
-              ]}
-            />
-          ),
+          tabBarHideOnKeyboard: true,
+          headerShown:false
         }}
       />
       <Tab.Screen
@@ -106,18 +102,7 @@ function TabBar(props) {
         options={{
           tabBarIcon: ({ focused }) => tabBarIcon("reader", "Love", focused),
           tabBarHideOnKeyboard: true,
-          header: () => (
-            <ProgressHeader
-              title="Love Notes"
-              data={[
-                { completed: true },
-                { completed: true },
-                { completed: true },
-                { completed: true },
-                { completed: false },
-              ]}
-            />
-          ),
+          headerShown:false
         }}
       />
       <Tab.Screen
@@ -126,18 +111,8 @@ function TabBar(props) {
         options={{
           tabBarIcon: ({ focused }) =>
             tabBarIcon("volume-low", "Listen", focused),
-          header: () => (
-            <ProgressHeader
-              title="Listen"
-              data={[
-                { completed: true },
-                { completed: true },
-                { completed: true },
-                { completed: true },
-                { completed: true },
-              ]}
-            />
-          ),
+            tabBarHideOnKeyboard: true,
+            headerShown:false
         }}
       />
     </Tab.Navigator>

@@ -15,7 +15,7 @@ import RecordVoiceButton from "../VoiceRecorder/RecordVoiceButton";
 import VoiceVisualization from "../VoiceRecorder/VoiceVisualization";
 import ProgressSlider from "../ProgressSlider";
 import EditableTitle from "./EditableTitle";
-import EditTitlePopUp from "./EditTitlePopUp";
+import EditTextPopUp from "./EditTextPopUp";
 import { translateToValue } from "../../common/values";
 
 function ListenItemUpdater({ setIsSelected, number }) {
@@ -27,7 +27,7 @@ function ListenItemUpdater({ setIsSelected, number }) {
   const [showPopUp, setShowPopUp] = useState(false)
   const popUp = () => {
     if(showPopUp == true){
-        return <EditTitlePopUp title={"Title"} setShowPopUp={setShowPopUp}/>
+        return <EditTextPopUp placeholder="title" title="Edit Title" setShowPopUp={setShowPopUp}/>
     }
   }
 
