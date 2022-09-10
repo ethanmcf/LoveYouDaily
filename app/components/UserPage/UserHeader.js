@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, FlatList, Dimensions, TouchableOpacity } from "
 import { Ionicons } from "@expo/vector-icons";
 import { colors, shadow } from "../../common/styles";
 import DayBubble from "./DayBubble";
+import dbManager from "../../management/database-manager";
 
 function UserHeader(props) {
   const data = [
@@ -105,7 +106,7 @@ function UserHeader(props) {
         style={styles.dayList}
       />
       
-      <TouchableOpacity style={{position:"absolute", right: 8, top: 53, justifyContent:"center", alignItems:"center"}}>
+      <TouchableOpacity style={{position:"absolute", right: 8, top: 53, justifyContent:"center", alignItems:"center"}} onPress={()=> {}}>
         <Ionicons name="settings" size={25} color={colors.secondary} style={{opacity: 0.9}}/>
       </TouchableOpacity>
     </View>

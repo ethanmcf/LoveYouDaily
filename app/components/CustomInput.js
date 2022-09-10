@@ -16,6 +16,8 @@ function CustomInput({
   error,
   setError,
   isPassword = false,
+  textColor = "black",
+  startingValue = null,
   setInput,
   extraWidth = 0,
   style
@@ -105,6 +107,7 @@ function CustomInput({
     input: {
       width: 200 + extraWidth,
       height: 40,
+      color: textColor
     },
     icon: {
       color: borderColor,
@@ -147,6 +150,7 @@ function CustomInput({
         onChangeText={(text) => {
           [setError(false), setInput(text), setShowError(false)];
         }}
+        value={startingValue}
         style={styles.input}
         placeholder={holderText}
         secureTextEntry={isPassword}

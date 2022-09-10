@@ -49,7 +49,7 @@ function HomeScreen(props) {
   useEffect(() => {
     if (itemSelected == 2) {
       dbManager.getPartnerName().then((name) => {
-        setName(name);
+        setName(name == ""  ? null : name);
         setShowNamePopUp(true);
       });
     } else if (itemSelected == 4) {
@@ -67,6 +67,7 @@ function HomeScreen(props) {
       {showNamePopUp ? (
         <EditTextPopUp
           saveFunc={handleNameUpdate}
+          noTextHolder={"Enter name"}
           placeholder={name}
           title="Patner's Name"
           setShowPopUp={setShowNamePopUp}

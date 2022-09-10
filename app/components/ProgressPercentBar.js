@@ -33,7 +33,7 @@ function ProgressPercentBar({data, setPercent}) {
 
   useEffect(() => {
     const data = dataCount()
-    setPercent(Math.floor((1 - data.percent) * 100).toString())
+    setPercent(Math.floor((data.percent) * 100).toString())
     Animated.spring(moveProgressBarValue, {
       toValue: translateValue,
       friction: 3,

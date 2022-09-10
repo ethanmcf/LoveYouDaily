@@ -18,7 +18,7 @@ import EditableTitle from "./EditableTitle";
 import EditTextPopUp from "./EditTextPopUp";
 import { translateToValue } from "../../common/values";
 
-function ListenItemUpdater({ setIsSelected, number }) {
+function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
   const maxSeconds = 10;
   const translateValue = useRef(new Animated.Value(0)).current;
   const [isRecording, setIsRecording] = useState(false);

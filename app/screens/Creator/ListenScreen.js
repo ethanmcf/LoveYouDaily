@@ -1,26 +1,54 @@
-import { useState } from "react";
-import { View, StyleSheet, Text, Animated, Dimensions } from "react-native";
-import { contentViewStyle, shadow } from "../../common/styles";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
 import ContentList from "../../components/CreatorPages/ContentList";
+import dbManager from "../../management/database-manager";
+import ProgressHeader from "../../components/CreatorPages/ProgressHeader";
 import ListenItemUpdater from "../../components/CreatorPages/ListenItemUpdater";
+
 function ListenScreen(props) {
-  const [itemSelected, setItemSelected] = useState(null);
+  const [itemSelectedIndex, setItemSelected] = useState(null);
+  const [renderItem, setRenderItem] = useState(null);
+  const [data, setData] = useState(null);
 
-  const data = [{ number: 1 }, { number: 2 }];
-
-  const renderItems = () => {
-    if (itemSelected != null) {
-      return (
-        <ListenItemUpdater
-          setIsSelected={setItemSelected}
-          number={itemSelected}
-        />
-      );
-    }
-    return <ContentList data={data} setIsSelected={setItemSelected} />;
+  const refreshData = () => {
+    dbManager.getLookContent().then((contentData) => {
+      setData(contentData);
+    });
   };
 
-  return renderItems();
+  useEffect(() => {
+    if (data == null) {
+      setRenderItem(null);
+      refreshData();
+    } else {
+      if (itemSelectedIndex != null) {
+        setRenderItem(
+          <View style={{ flex: 1 }}>
+            <ProgressHeader title="Look" data={data} />
+            <ListenItemUpdater
+              data={data[itemSelectedIndex - 1]}
+              setIsSelected={setItemSelected}
+              number={itemSelectedIndex}
+              refreshData={refreshData}
+            />
+          </View>
+        );
+      } else {
+        setRenderItem(
+          <View style={{ flex: 1 }}>
+            <ProgressHeader title="Look" data={data} />
+            <ContentList
+              data={data}
+              setIsSelected={setItemSelected}
+              setRender={setRenderItem}
+            />
+          </View>
+        );
+      }
+    }
+  }, [itemSelectedIndex, data]);
+
+  return renderItem;
 }
 
 export default ListenScreen;

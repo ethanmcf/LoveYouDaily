@@ -7,7 +7,7 @@ import {
   TouchableNativeFeedback,
   Keyboard,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import UserSection from "../components/SigningPage/UserSection";
 import CreaterSection from "../components/SigningPage/CreaterSection";
 import LoginSwitch from "../components/SigningPage/LoginSwitch";
@@ -21,16 +21,17 @@ function SignUpScreen({ navigation }) {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [successSignIn, setSuccessSignIn] = useState(null);
   
-  const [isSigned, setIsSigned] = useContext(AppContext)
+  const { signing, successful } = useContext(AppContext)
+  const [isSigned, setIsSigned] = signing;
+  const [success, setSuccess] = successful;
 
   //Starts check animation is there is a successful sign up update
   useEffect(() => {
     if (isSuccessful) {
-      setSuccessSignIn(<Check />);
-      setTimeout(
-        () => [setSuccessSignIn(null), setIsSigned(!isSigned)], 
-        2000
-      );
+      setSuccess(true);
+        setTimeout(() => {
+          setIsSigned(!isSigned);
+        }, 2000);
     }
   }, [isSuccessful]);
 

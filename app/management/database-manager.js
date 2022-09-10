@@ -1,29 +1,155 @@
 import database from "@react-native-firebase/database";
 import auth from "@react-native-firebase/auth";
-import storage from "@react-native-firebase/storage"
-import { Platform } from 'react-native'
+import storage from "@react-native-firebase/storage";
+import { Platform } from "react-native";
+
+const noteTitle = "Custom Note Title"
+const lookTitle = "Custom Image Title"
+const listenTitle = "Custom Audio Title"
 
 class DatabaseManager {
   constructor() {
     this.db = database();
+    this.storage = storage();
+  }
+  test(){
+    auth().signOut()
+  }
+  //MARK: -  Content functions
+  async getNotesContent() {
+    const code = await this.getCode();
+    const items = (
+      await this.db.ref(`content/${code}/notesContent`).once("value")
+    ).val();
+
+    let data = [];
+    Object.entries(items).forEach((item, index) => {
+      const title = item[1].title;
+      const content = item[1].content;
+      const bucket = item[0];
+
+      data.push({
+        number: 1 + index,
+        bucket: bucket,
+        title: title,
+        description: content,
+        content: content,
+        completed:
+          content != null && content != "" && title.trim() != noteTitle
+            ? true
+            : false,
+      });
+    });
+    return data;
+  }
+  async updateNotesContent(bucket, title, content) {
+    const code = await this.getCode();
+    this.db.ref(`content/${code}/notesContent/${bucket}`).set({
+      title: title,
+      content: content,
+    });
+  }
+  async getLookContent() {
+    let data = [];
+    const code = await this.getCode();
+    const items = (
+      await this.db.ref(`content/${code}/lookContent`).once("value")
+    ).val();
+    const length = Object.entries(items).length;
+
+    for (let i = 0; i < length; i++) {
+      let imageURL;
+
+      const item = Object.entries(items)[i];
+      const title = item[1].title;
+      const imageName = item[1].content;
+      const bucket = item[0];
+      const ref = this.storage.ref(`${code}/lookContent/${imageName}`);
+
+      await ref
+        .getDownloadURL()
+        .then((url) => {
+          imageURL = url;
+        })
+        .catch(() => {
+          imageURL = null;
+        });
+
+      data.push({
+        number: 1 + i,
+        bucket: bucket,
+        title: title,
+        description: imageName,
+        content: imageURL,
+        completed:
+          imageName != null && imageName != "" && title.trim() != lookTitle
+            ? true
+            : false,
+      });
+    }
+    return data;
+  }
+  async updateLookContent(bucket, title, imageName, imagePath) {
+    //Updates database
+    const code = await this.getCode();
+    let oldImageName = (
+      await this.db.ref(`content/${code}/lookContent/${bucket}`).once("value")
+    ).val().content;
+    this.db.ref(`content/${code}/lookContent/${bucket}`).set({
+      title: title,
+      content: imagePath == null ? "" : imageName,
+    });
+
+    //Updates storage
+    this.deleteStorageItem(oldImageName);
+    if(imagePath != null){
+      const successUpload = await this.uploadToStorage(imagePath, imageName);
+      return successUpload;
+    }
+    return true
   }
 
-  async isCreatorAccount() {
-    const UID = auth().currentUser.uid;
-    const snapshot = await this.db.ref(`users/${UID}/creator`).once("value");
-    return snapshot.val();
-  }
-
-  async codeExists(code) {
-    const snapshot = await this.db.ref(`content/${code}`).once("value");
-    return snapshot.exists();
-  }
-
+  //MARK: - Get info functions
   async getCode() {
     const UID = auth().currentUser.uid;
     const snapshot = await this.db.ref(`users/${UID}/code`).once("value");
     return snapshot.val();
   }
+  async getCreatorName() {
+    const UID = auth().currentUser.uid;
+    const snapshot = await this.db.ref(`users/${UID}/name`).once("value");
+    return snapshot.val();
+  }
+  async getPartnerName() {
+    const UID = auth().currentUser.uid;
+    const code = (await this.db.ref(`users/${UID}/code`).once("value")).val();
+    const name = (
+      await this.db.ref(`content/${code}/partnerName`).once("value")
+    ).val();
+    return name;
+  }
+  async getOccasion() {
+    const UID = auth().currentUser.uid;
+    const code = (await this.db.ref(`users/${UID}/code`).once("value")).val();
+    const occasion = (
+      await this.db.ref(`content/${code}/occasion`).once("value")
+    ).val();
+    return occasion;
+  }
+  async getTemplate(contentType, number) {
+    const templates = (
+      await this.db.ref(`templates/${contentType}`).once("value")
+    ).val();
+    let data;
+    Object.entries(templates).forEach(([key, value], index) => {
+      if (index == number - 1) {
+        data = { title: key, content: value };
+      }
+    });
+    return data;
+  }
+
+  //MARK: - Setting/Updatintg functions
   createNewUserAccount(email, code) {
     const UID = auth().currentUser.uid;
     this.db.ref(`users/${UID}`).set(
@@ -39,7 +165,6 @@ class DatabaseManager {
       }
     );
   }
-
   createNewCreatorAccount(name, email) {
     const UID = auth().currentUser.uid;
     const code = this.generateSecureCode();
@@ -62,149 +187,107 @@ class DatabaseManager {
       //creates new content directory
       this.db.ref(`content/${code}`).set({
         notesContent: {
-          "Item Custom Title": "",
-          "Item Custom Title ": "",
-          "Item Custom Title  ": "",
-          "Item Custom Title   ": "",
-          "Item Custom Title    ": "",
-        },
-        listenContent: {
-          "Item Custom Title": "",
-          "Item Custom Title ": "",
-          "Item Custom Title  ": "",
-          "Item Custom Title   ": "",
-          "Item Custom Title    ": "",
+          item1: { title: noteTitle, content: "" },
+          item2: { title: noteTitle, content: "" },
+          item3: { title: noteTitle, content: "" },
+          item4: { title: noteTitle, content: "" },
+          item5: { title: noteTitle, content: "" },
         },
         lookContent: {
-          "Item Custom Title": "",
-          "Item Custom Title ": "",
-          "Item Custom Title  ": "",
-          "Item Custom Title   ": "",
-          "Item Custom Title    ": "",
+          item1: { title: lookTitle, content: "" },
+          item2: { title: lookTitle, content: "" },
+          item3: { title: lookTitle, content: "" },
+          item4: { title: lookTitle, content: "" },
+          item5: { title: lookTitle, content: "" },
+        },
+        listenContent: {
+          item1: { title: listenTitle, content: "" },
+          item2: { title: listenTitle, content: "" },
+          item3: { title: listenTitle, content: "" },
+          item4: { title: listenTitle, content: "" },
+          item5: { title: listenTitle, content: "" },
         },
         partnerName: "",
-        occasion: "Welcome",
+        occasion: "Happy anniversary",
       });
     });
   }
-
   deleteUser(user) {
     user.delete();
   }
-
-  async getCreatorName() {
-    const UID = auth().currentUser.uid;
-    const snapshot = await this.db.ref(`users/${UID}/name`).once("value");
-    return snapshot.val();
-  }
-
-  async getPartnerName() {
-    const UID = auth().currentUser.uid;
-    const code = (await this.db.ref(`users/${UID}/code`).once("value")).val();
-    const name = (
-      await this.db.ref(`content/${code}/partnerName`).once("value")
-    ).val();
-    return name;
-  }
-
-  async getContent(contentType) {
-    //contentType options: listenContent, lookContent, notesContent
-    const UID = auth().currentUser.uid;
-    const code = (await this.db.ref(`users/${UID}/code`).once("value")).val();
-    const items = (
-      await this.db.ref(`content/${code}/${contentType}`).once("value")
-    ).val();
-    let data = [];
-    Object.entries(items).forEach(([key, value], index) => {
-      data.push({
-        number: 1 + index,
-        title: key,
-        content: value.trim(),
-        completed: value == "" ? false : true,
-      });
-    });
-    return data;
-  }
-
-  async getOccasion() {
-    const UID = auth().currentUser.uid;
-    const code = (await this.db.ref(`users/${UID}/code`).once("value")).val();
-    const occasion = (
-      await this.db.ref(`content/${code}/occasion`).once("value")
-    ).val();
-    return occasion;
-  }
-
-  async getTemplate(contentType, number){
-    const templates = (await this.db.ref(`templates/${contentType}`).once("value")).val()
-    let data;
-    Object.entries(templates).forEach(([key, value], index) => {
-      if(index == number-1){
-        data = {title: key, content: value}
-      }
-    });
-    return data
-    
-  }
-  async updateContent(contentType, oldTitle, newTitle, content) {
-    const UID = auth().currentUser.uid;
-    const code = (await this.db.ref(`users/${UID}/code`).once("value")).val();
-    const titleAlreadyExists = (
-      await this.db
-        .ref(`content/${code}/${contentType}/${newTitle}`)
-        .once("value")
-    ).exists();
-    if(newTitle.length > 21){
-      return true
-    }
-    if (titleAlreadyExists == false) {
-      this.db.ref(`content/${code}/${contentType}/${oldTitle}`).set(null);
-      this.db
-        .ref(`content/${code}/${contentType}/${newTitle}`)
-        .set(content);
-      return false
-    }
-
-    if(newTitle == oldTitle){
-      this.db.ref(`content/${code}/${contentType}/${newTitle}`)
-      .set(content);
-      return false
-    }
-
-    return true
-  }
-
   setOccasion(occasion) {
     this.getCode().then((code) => {
       this.db.ref(`content/${code}/occasion`).set(occasion);
     });
   }
-
   setPartnerName(name) {
     this.getCode().then((code) => {
       this.db.ref(`content/${code}/partnerName`).set(name);
     });
   }
 
+  //MARK: - Misc Functions
+  async isCreatorAccount(UID) {
+    const snapshot = await this.db.ref(`users/${UID}/creator`).once("value");
+    return snapshot.val();
+  }
+  async codeExists(code) {
+    const snapshot = await this.db.ref(`content/${code}`).once("value");
+    return snapshot.exists();
+  }
   generateSecureCode() {
     return Math.random().toString(36).slice(2, 8);
   }
-
-  //Storage
-  getPlatformPath(path, uri){
+  getPlatformPath(path, uri) {
     return Platform.select({
-      android:{path},
-      ios:{uri}
-    })
+      android: { path },
+      ios: { uri },
+    });
   }
-  async uploadImageToStorage(path, imageName){
-    const ref = storage().ref(imageName)
-    const task = await ref.putFile(path)
-    task.then(()=> {
-      console.log("Image uploaded")
-    }).catch((error) => {
-      console.log("error uploading")
-    })
+
+  //MARK: Storage Functions
+  async deleteStorageItem(name) {
+    const code = await this.getCode();
+    const exists = await this.checkStorageForItem(name);
+
+    if (exists == true) {
+      this.storage.ref(`${code}/lookContent/${name}`).delete();
+    }
+  }
+  async checkStorageForItem(title) {
+    let exists = false;
+    const code = await this.getCode();
+
+    await this.storage
+      .ref(`${code}/lookContent`)
+      .listAll()
+      .then((result) => {
+        if (result != null) {
+          result.items.forEach((itemRef) => {
+            const url = itemRef.toString();
+            const fileName = this.storage.refFromURL(url).name;
+            if (fileName == title) {
+              exists = true;
+            }
+          });
+        }
+      });
+    return exists;
+  }
+  async uploadToStorage(path, name) {
+    let success;
+    const code = await this.getCode();
+
+    const ref = this.storage.ref(`${code}/lookContent/${name}`);
+    const task = ref.putFile(path);
+    await task
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+    return success;
   }
 }
 

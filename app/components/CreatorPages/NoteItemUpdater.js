@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -16,46 +16,66 @@ import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import EditableTitle from "./EditableTitle";
 import EditTextPopUp from "./EditTextPopUp";
 import dbManager from "../../management/database-manager";
-
+import { AppContext } from "../../management/globals";
 import { translateToValue } from "../../common/values";
 
 function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
   const translateValue = useRef(new Animated.Value(0)).current;
-  const [showPopUp, setShowPopUp] = useState(false)
-  const [title, setTitle] = useState(data.title.trim())
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [title, setTitle] = useState(data.title.trim());
   const [content, setContent] = useState(data.content);
-  const [charsLeft, setCharsLeft] = useState(320)
+  const [charsLeft, setCharsLeft] = useState(320);
+
+  const { signing, successful } = useContext(AppContext);
+  const [success, setSucces] = successful;
+
   const popUp = () => {
-    if(showPopUp == true){
-        return <EditTextPopUp saveFunc={handleSave} placeholder={title} title="Edit Title" setShowPopUp={setShowPopUp}/>
+    if (showPopUp == true) {
+      return (
+        <EditTextPopUp
+          saveFunc={handleSave}
+          placeholder={title}
+          title="Edit Title"
+          setShowPopUp={setShowPopUp}
+        />
+      );
     }
-  }
+  };
 
   const handleTextChange = (text) => {
-    const length = text.length
-    if(length <= 320){
-      setCharsLeft(320-length)
-      setContent(text)
+    const length = text != null ? text.length : 0;
+    if (length <= 320) {
+      setCharsLeft(320 - length);
+      setContent(text);
     }
-  }
+  };
 
-  const handleSave = (title, content = data.content) => {
-    dbManager.updateContent("notesContent", data.title, title, content).then((titleExists) => {
-      if(titleExists == true){
-        Alert.alert("Error", "Each custom title must be unique, only contain letters and be less than 21 characters!", [{text:"OK"}])
-      }else{
-        setTitle(title)
-        refreshData()
-      }
-    })
-  }
+  const handleSave = (theTitle, content = data.content) => {
+    if (theTitle.length > 21) {
+      Alert.alert("Title Issue", "Each title must be less than 21 characters!");
+    } else if (theTitle.length == 0) {
+      Alert.alert(
+        "Title Issue",
+        "Each title must contain at least one character!"
+      );
+    } else {
+      dbManager.updateNotesContent(data.bucket, theTitle, content).then(() => {
+        setTitle(theTitle);
+
+        setSucces(true);
+        setTimeout(() => {
+          refreshData();
+        }, 2000);
+      });
+    }
+  };
 
   const handleTemplate = () => {
     dbManager.getTemplate("notesContent", number).then((template) => {
-      setContent(template.content)
-      setTitle(template.title)
-    })
-  }
+      setContent(template.content);
+      setTitle(template.title);
+    });
+  };
 
   const reverseAnimation = () => {
     Animated.timing(translateValue, {
@@ -73,7 +93,7 @@ function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
       duration: 350,
       useNativeDriver: true,
     }).start();
-    handleTextChange(content)
+    handleTextChange(content);
   });
 
   const styles = StyleSheet.create({
@@ -131,7 +151,7 @@ function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
       paddingRight: 10,
       paddingTop: 3,
       paddingBottom: 3,
-      justifyContent:"flex-start",
+      justifyContent: "flex-start",
     },
     numberFont: {
       fontSize: 27,
@@ -150,73 +170,86 @@ function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
       color: colors.secondary,
       top: 17,
     },
-    charsLeft:{
-        position:"absolute",
-        bottom: -15,
-        right: 0,
-        fontSize: 9,
-        color: colors.grey
+    charsLeft: {
+      position: "absolute",
+      bottom: -15,
+      right: 0,
+      fontSize: 9,
+      color: colors.grey,
     },
-    clearButton:{
+    clearButton: {
       right: 25,
-      position:"absolute",
+      position: "absolute",
       bottom: 25,
     },
   });
 
   return (
     <TouchableNativeFeedback onPress={() => Keyboard.dismiss()}>
-    <View style={styles.container}>
-      <Animated.View style={[styles.background]}>
-        <TouchableOpacity
-          style={styles.backArrow}
-          onPress={() => [reverseAnimation()]}
-        >
-          <Ionicons name="arrow-back" size={24} color={colors.main} />
-        </TouchableOpacity>
-        <Text style={styles.numberFont}>{number}.</Text>
-        <EditableTitle title={title} setShowPopUp={setShowPopUp}/>
-        <View style={styles.boxInput}>
-          <TextInput
-            numberOfLines={20}
-            multiline={true}
-            maxLength={320}
-            placeholder="Enter message ..."
-            textAlignVertical="top"
-            value={content}
-            onChangeText={(text)=>{handleTextChange(text)}}
-            style={{opacity: 0.75}}
-          />
-          <Text style={styles.charsLeft}>{charsLeft} characters left</Text>
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={[
-                styles.saveButton,
-                button,
-                shadow,
-                {marginRight: 10 },
-              ]}
-              onPress={()=> {handleSave(title, content)}}
-            >
-              <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.saveButton, button, shadow, {backgroundColor: colors.secondary}]} onPress={()=> {handleTemplate()}}>
-              <Text style={{ fontSize: 12, opacity: 0.8 }}>Template</Text>
-            </TouchableOpacity>
+      <View style={styles.container}>
+        <Animated.View style={[styles.background]}>
+          <TouchableOpacity
+            style={styles.backArrow}
+            onPress={() => [reverseAnimation()]}
+          >
+            <Ionicons name="arrow-back" size={24} color={colors.main} />
+          </TouchableOpacity>
+          <Text style={styles.numberFont}>{number}.</Text>
+          <EditableTitle title={title} setShowPopUp={setShowPopUp} />
+          <View style={styles.boxInput}>
+            <TextInput
+              numberOfLines={20}
+              multiline={true}
+              maxLength={320}
+              placeholder="Enter message ..."
+              textAlignVertical="top"
+              value={content}
+              onChangeText={(text) => {
+                handleTextChange(text);
+              }}
+              style={{ opacity: 0.75 }}
+            />
+            <Text style={styles.charsLeft}>{charsLeft} characters left</Text>
           </View>
-        </View>
 
-        <TouchableOpacity style={styles.clearButton} onPress={()=> {setContent("")}}>
+          <View style={styles.buttonContainer}>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={[styles.saveButton, button, shadow, { marginRight: 10 }]}
+                onPress={() => {
+                  handleSave(title, content);
+                }}
+              >
+                <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.saveButton,
+                  button,
+                  shadow,
+                  { backgroundColor: colors.secondary },
+                ]}
+                onPress={() => {
+                  handleTemplate();
+                }}
+              >
+                <Text style={{ fontSize: 12, opacity: 0.8 }}>Template</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={() => {
+              setContent("");
+            }}
+          >
             <MaterialIcons name="clear" size={23} color={colors.red} />
           </TouchableOpacity>
 
-        {popUp()}
-      </Animated.View>
-      
-    </View>
+          {popUp()}
+        </Animated.View>
+      </View>
     </TouchableNativeFeedback>
   );
 }

@@ -97,7 +97,7 @@ function ContentList({ data, setIsSelected, setRender }) {
                 onPress={() => [setSelected(true), setIndexToAnimate(index), ]}
                 disabled={selected}
               >
-                <ListItem number={item.number} title={item.title} completed={item.completed} description={item.content}/>
+                <ListItem number={item.number} title={item.title} completed={item.completed} description={item.description}/>
               </TouchableOpacity>
             </Animated.View>
           );

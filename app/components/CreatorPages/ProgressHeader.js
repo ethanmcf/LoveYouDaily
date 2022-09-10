@@ -38,7 +38,7 @@ function ProgressHeader({ title, data }) {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.label}>{title} progress</Text>
-      <Text style={styles.progressText}>{percentToComplete}% to complete</Text>
+      <Text style={styles.progressText}>{percentToComplete}% complete</Text>
 
       <View style={{ paddingLeft: 30, top: -25 }}>
         <ProgressPercentBar data={data} setPercent={setPercentToComplete}/>

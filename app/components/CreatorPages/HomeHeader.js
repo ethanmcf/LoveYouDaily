@@ -78,6 +78,8 @@ function HomeHeader({}) {
           justifyContent: "center",
           alignItems: "center",
         }}
+
+        onPress={()=> [dbManager.test()]}
       >
         <Ionicons
           name="settings-sharp"

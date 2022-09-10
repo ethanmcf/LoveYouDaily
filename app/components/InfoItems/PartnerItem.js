@@ -9,12 +9,13 @@ import {
   TextInput,
   FlatList,
   ScrollView,
+  Alert,
 } from "react-native";
 
 import BaseInfoItem from "./BaseInfoItem";
 import { button, colors, shadow } from "../../common/styles";
 import CustomInput from "../CustomInput";
-import { dbManager } from "../../management/globals";
+import dbManager from "../../management/database-manager";
 
 function PartnerItem({ setIsSelected }) {
   const data = [
@@ -43,6 +44,10 @@ function PartnerItem({ setIsSelected }) {
         }
       });
 
+      if(occasionIndex == null){
+        setOccasionInput(occasion)
+      }
+
       setSelectedReasonIndex(
         occasionIndex != null ? occasionIndex : data.length - 1
       );
@@ -55,6 +60,10 @@ function PartnerItem({ setIsSelected }) {
   };
 
   handleOccasionUpdate = () => {
+    if(occasionInput.length == 0){
+      Alert.alert("Error","Invalid occasion, must be at least one character!")
+      return
+    }
     let occasion;
     if (selectedReasonIndex == data.length - 1) {
       occasion = occasionInput;
@@ -180,13 +189,15 @@ function PartnerItem({ setIsSelected }) {
         />
         <CustomInput
           iconName="build"
-          holderText="e.g. Merry Christmas"
+          holderText={"e.g. Merry Christmas"}
           error={occasionError}
           setError={setOccasionError}
           isPassword={false}
           setInput={setOccasionInput}
           errorInfo="No spaces or special characters."
           extraWidth={10}
+          textColor="rgb(75,75,75)"
+          startingValue={occasionInput}
           style={{
             left: 6,
             bottom: -29,

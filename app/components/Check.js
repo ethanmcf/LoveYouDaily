@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, Dimensions } from "react-native";
 import Svg, { G, Circle, Polyline, Path } from "react-native-svg";
 
 //Circle
@@ -74,10 +74,11 @@ function Check(props) {
       transform:[{scale: checkScaleValue}],
       opacity: checkFadeValue,
       position:"absolute",
+      alignSelf:"center",
     },
     dimBackground: {
-      width: 1000,
-      height: 1000,
+      width: Dimensions.get('window').width,
+      height: Dimensions.get('window').height,
       backgroundColor: "white",
       opacity: dimBackgroundValue,
       alignSelf:"center",

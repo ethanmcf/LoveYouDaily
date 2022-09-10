@@ -16,7 +16,7 @@ import MainLogo from "../components/Logo/MainLogo";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../management/globals";
 
-function SignInScreen({ navigation}) {
+function SignInScreen({ navigation }) {
   const [emailError, setEmailError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
 
@@ -25,8 +25,9 @@ function SignInScreen({ navigation}) {
 
   const [successSignIn, setSuccessSignIn] = useState(null);
 
-  const [isSigned, setIsSigned] = useContext(AppContext)
-
+  const { signing, successful } = useContext(AppContext);
+  const [isSigned, setIsSigned] = signing;
+  const [success, setSuccess] = successful;
 
   const styles = StyleSheet.create({
     container: {
@@ -59,16 +60,15 @@ function SignInScreen({ navigation}) {
   });
 
   handleSignIn = () => {
-    setEmailError(null)
-    setPasswordError(null)
+    setEmailError(null);
+    setPasswordError(null);
     auth()
       .signInWithEmailAndPassword(emailInput, passwordInput)
       .then(() => {
-        setSuccessSignIn(<Check />);
-        setTimeout(
-          () => [setSuccessSignIn(null), setIsSigned(!isSigned)],
-          2000
-        );
+        setSuccess(true);
+        setTimeout(() => {
+          setIsSigned(!isSigned);
+        }, 2000);
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -77,17 +77,18 @@ function SignInScreen({ navigation}) {
         if (error.code === "auth/invalid-email") {
           setEmailError("That email address is invalid!");
         }
-        if(error.code === "auth/weak-password" || error.code === "auth/invalid-password"){
-          setPasswordError("Password must be at least 6 characters!")
+        if (
+          error.code === "auth/weak-password" ||
+          error.code === "auth/invalid-password"
+        ) {
+          setPasswordError("Password must be at least 6 characters!");
         }
-        
-        //If specific errors have not occured, set generic error
-        if(emailError && passwordError){
-          setEmailError("An error occured!")
-        }
-        
-      });
 
+        //If specific errors have not occured, set generic error
+        if (emailError && passwordError) {
+          setEmailError("An error occured!");
+        }
+      });
   };
 
   return (

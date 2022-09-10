@@ -21,7 +21,7 @@ import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 import { AppContext } from "../management/globals";
 
 function UserScreen({ navigation }) {
-  const [isSigned, setIsSigned] = useContext(AppContext)
+  // const [isSigned, setIsSigned] = useContext(AppContext)
 
   const styles = StyleSheet.create({
     background: {

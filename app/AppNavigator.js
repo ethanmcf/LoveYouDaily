@@ -15,7 +15,8 @@ function AppNavigator() {
   const Stack = createNativeStackNavigator();
   const [initializing, setInitializing] = useState(true);
 
-  const [isSigned, setIsSigned] = useContext(AppContext)
+  const { signing, saving } = useContext(AppContext)
+  const [isSigned, setIsSigned] = signing;
 
   const [userState, setUserState] = useState("sign")
 
@@ -24,6 +25,7 @@ function AppNavigator() {
       return ""
     }
     return auth().currentUser.uid
+    
   }
 
   function onStateChange(){

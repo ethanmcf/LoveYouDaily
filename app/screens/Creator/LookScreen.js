@@ -5,22 +5,22 @@ import ContentList from "../../components/CreatorPages/ContentList";
 import dbManager from "../../management/database-manager";
 import ProgressHeader from "../../components/CreatorPages/ProgressHeader";
 
+
 function LookScreen(props) {
   const [itemSelectedIndex, setItemSelected] = useState(null);
   const [renderItem, setRenderItem] = useState(null);
   const [data, setData] = useState(null);
 
   const refreshData = () => {
-    dbManager.getContent("lookContent").then((contentData) => {
-      setData(contentData)
+    dbManager.getLookContent().then((contentData) => {
+      setData(contentData);
     });
   };
-
 
   useEffect(() => {
     if (data == null) {
       setRenderItem(null);
-      refreshData()
+      refreshData();
     } else {
       if (itemSelectedIndex != null) {
         setRenderItem(

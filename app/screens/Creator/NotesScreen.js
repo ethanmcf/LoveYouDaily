@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { View } from "react-native";
 import NoteItemUpdater from "../../components/CreatorPages/NoteItemUpdater";
 import ContentList from "../../components/CreatorPages/ContentList";
 import dbManager from "../../management/database-manager";
 import ProgressHeader from "../../components/CreatorPages/ProgressHeader";
+
 
 function NotesScreen(props) {
   const [itemSelectedIndex, setItemSelected] = useState(null);
@@ -11,7 +12,7 @@ function NotesScreen(props) {
   const [data, setData] = useState(null);
 
   const refreshData = () => {
-    dbManager.getContent("notesContent").then((contentData) => {
+    dbManager.getNotesContent().then((contentData) => {
       setData(contentData)
     });
   };

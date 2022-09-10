@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { colors } from "../../common/styles";
 
-const fillerDescription = "Click to complete this note"
+const fillerDescription = "Click to complete this item"
 
 
 function ListItem({number, title, completed, description}) {
@@ -69,7 +69,7 @@ function ListItem({number, title, completed, description}) {
     <Text style={styles.numberFont}>{number}.</Text>
     <View style={styles.lineBreak}/>
     <Text style={styles.titleFont}>{title}</Text>
-    <Text style={styles.descriptionFont} numberOfLines={1}>{description == "" ? fillerDescription : description}</Text>
+    <Text style={styles.descriptionFont} numberOfLines={1}>{(description == null || description == "")? fillerDescription : description}</Text>
     <MaterialIcons name={completed ? "check" : "edit"} size={25} color={colors.main} style={styles.editIcon}/>
   </View>
   );
