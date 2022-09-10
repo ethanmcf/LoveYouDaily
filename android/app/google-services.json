@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "116105240307",
+    "firebase_url": "https://loveyoudaily-bf0c2-default-rtdb.firebaseio.com",
+    "project_id": "loveyoudaily-bf0c2",
+    "storage_bucket": "loveyoudaily-bf0c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116105240307:android:220f3b2ca2601dba04e186",
+        "android_client_info": {
+          "package_name": "com.loveyoudaily"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "116105240307-l5m1nnok5l7n7q2ojud8v52un8ohf0gs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_ztJl2bglduwLEpvFG4HASp_GZjuSdkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116105240307-l5m1nnok5l7n7q2ojud8v52un8ohf0gs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "116105240307-r4r163grc6fgg38f4qs645bvh0pif3on.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.LoveYouDaily"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
