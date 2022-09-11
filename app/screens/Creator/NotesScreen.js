@@ -5,11 +5,13 @@ import ContentList from "../../components/CreatorPages/ContentList";
 import dbManager from "../../management/database-manager";
 import ProgressHeader from "../../components/CreatorPages/ProgressHeader";
 import React from 'react'
-
+import { AppContext } from "../../management/globals";
 function NotesScreen(props) {
   const [itemSelectedIndex, setItemSelected] = useState(null);
   const [renderItem, setRenderItem] = useState(null);
   const [data, setData] = useState(null);
+  const { signing, successful, loading } = useContext(AppContext);
+  const [isLoading, setIsLoading] = loading
 
   const refreshData = () => {
     dbManager.getNotesContent().then((contentData) => {
@@ -20,9 +22,11 @@ function NotesScreen(props) {
 
   useEffect(() => {
     if (data == null) {
+      setIsLoading(true)
       setRenderItem(null);
       refreshData()
     } else {
+      setIsLoading(false)
       if (itemSelectedIndex != null) {
         setRenderItem(
           <View style={{ flex: 1 }}>

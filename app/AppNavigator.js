@@ -11,13 +11,15 @@ import { AppContext} from "./management/globals";
 import dbManager from "./management/database-manager";
 import { Text } from 'react-native'
 import React from 'react'
+import LoadSpinner from './components/LoadSpinner';
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
   const [initializing, setInitializing] = useState(true);
 
-  const { signing, saving } = useContext(AppContext)
+  const { signing, saving, loading } = useContext(AppContext)
   const [isSigned, setIsSigned] = signing;
+  const [isLoading, setIsLoading] = loading;
 
   const [userState, setUserState] = useState("sign")
 
@@ -49,7 +51,9 @@ const AppNavigator = () => {
 
 
   //Returns no components if connecting to firebase
-  if (initializing) return null;
+  if (initializing){
+    return <LoadSpinner/>
+  }
 
   //Navigates to user page if a user is signed in
   // if (userState === "user") {

@@ -9,6 +9,8 @@ import EditTextPopUp from "../../components/CreatorPages/EditTextPopUp";
 import dbManager from "../../management/database-manager";
 import ShareCodePopUp from "../../components/CreatorPages/ShareCodePopUp";
 import React from 'react'
+
+
 function HomeScreen(props) {
   const [name, setName] = useState("");
   const [code, setCode] = useState("error");
@@ -63,6 +65,7 @@ function HomeScreen(props) {
 
   return (
     <View style={{ flex: 1 }}>
+
       {renderItems()}
       {showNamePopUp ? (
         <EditTextPopUp

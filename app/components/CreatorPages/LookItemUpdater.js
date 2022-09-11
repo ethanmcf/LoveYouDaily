@@ -26,8 +26,9 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
   const [title, setTitle] = useState(data.title.trim());
   const [showPopUp, setShowPopUp] = useState(false);
 
-  const { signing, successful } = useContext(AppContext);
+  const { signing, successful, loading } = useContext(AppContext);
   const [success, setSucces] = successful;
+  const [isLoading, setIsLoading] = loading
 
   const translateValue = useRef(new Animated.Value(0)).current;
   const imageRatio = 1.33;
