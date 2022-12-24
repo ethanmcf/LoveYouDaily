@@ -2,13 +2,14 @@ import { useState, useContext, useEffect, useRef } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import InfoList from "../../components/CreatorPages/InfoList";
-import StartItem from "../../components/InfoItems/StartItem";
 import PartnerItem from "../../components/InfoItems/PartnerItem";
 
 import EditTextPopUp from "../../components/CreatorPages/EditTextPopUp";
 import dbManager from "../../management/database-manager";
 import ShareCodePopUp from "../../components/CreatorPages/ShareCodePopUp";
 import React from 'react'
+import LoadSpinner from "../../components/LoadSpinner";
+import InstructionController from "../../components/CreatorPages/InstructionsController";
 
 
 function HomeScreen(props) {
@@ -20,9 +21,7 @@ function HomeScreen(props) {
   const [itemSelected, setItemSelected] = useState(null);
   const renderItems = () => {
     if (itemSelected == 0) {
-      return (
-        <StartItem title="Start" height={200} setIsSelected={setItemSelected} />
-      );
+      return <InstructionController setIsSelected={setItemSelected}/>
     } else if (itemSelected == 1) {
       return <PartnerItem setIsSelected={setItemSelected} />;
     } else if (itemSelected == 3) {
@@ -74,7 +73,7 @@ function HomeScreen(props) {
           placeholder={name}
           title="Patner's Name"
           setShowPopUp={setShowNamePopUp}
-          style={{ alignSelf: "center" }}
+          style={{ alignSelf: "center"}}
         />
       ) : null}
       {showCodePopUp ? (

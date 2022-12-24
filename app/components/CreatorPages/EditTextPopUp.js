@@ -93,7 +93,7 @@ function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFun
       <View style={styles.focusContainer}/>
       <Text style={styles.font}>{title}</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, {height: 40}]}
         autoFocus={true}
         value={input}
         onChangeText={(text) => [setInput(text)]}

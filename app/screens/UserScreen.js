@@ -88,8 +88,9 @@ function UserScreen({ navigation }) {
   });
 
   return (
-    <View style={{ flex: 1 }}>
-      <GiftSection navigation={navigation} />
+    <View style={{ flex: 1, justifyContent:'center' }}>
+      {/* <GiftSection navigation={navigation} /> */}
+      <Text>Ethan</Text>
     </View>
   );
 }

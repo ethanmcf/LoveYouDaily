@@ -8,6 +8,7 @@ export const colors = {
   shadow: "rgba(100,100,100,0.3)",
   grey: "rgb(200,200,200)",
   darkGrey: "rgb(160,160,160)",
+  darkRed: "rgb(179,0,0)"
 };
 
 export const shadow = {

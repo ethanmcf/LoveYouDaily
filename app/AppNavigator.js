@@ -21,7 +21,7 @@ const AppNavigator = () => {
   const [isSigned, setIsSigned] = signing;
   const [isLoading, setIsLoading] = loading;
 
-  const [userState, setUserState] = useState("sign")
+  const [userState, setUserState] = useState(null)
 
   const uid = () => {
     if(auth.auth().currentUser == null){

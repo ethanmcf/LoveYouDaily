@@ -124,7 +124,7 @@ const ShareCodePopUp = ({ setShowPopUp, code, style }) => {
       <View style={styles.codeContainer}>
         <View style={styles.codeText}>
           <TextInput
-            style={{ opacity: 0.8 }}
+            style={{ opacity: 0.8, height: 40 }}
             value={code}
             focusable={true}
             selectTextOnFocus={true}

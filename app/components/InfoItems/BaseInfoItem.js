@@ -100,7 +100,7 @@ function BaseInfoItem({title, height, setIsSelected, children}) {
       >
         <Ionicons name="arrow-back" size={25} color={colors.main} />
         <Text style={{ fontWeight: "bold", fontSize:16, left: 5, color: colors.main }}>
-          Back
+          Return
         </Text>
       </TouchableOpacity>
     </Animated.View>

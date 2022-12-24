@@ -9,9 +9,11 @@ import {
 import { colors } from "../../common/styles";
 import ProgressTaskBar from "../ProgressTaskBar";
 import Ionicons from "react-native-vector-icons/Ionicons"
+import SideMenu from "../SideMenu";
 import dbManager from "../../management/database-manager";
 
-function HomeHeader({}) {
+function HomeHeader({navigation}) {
+  const [sideMenuShown, setSideMenuShown] = useState(false)
   const [name, setName] = useState("");
   const userName = () => {
     dbManager.getCreatorName().then(function (name) {
@@ -78,8 +80,7 @@ function HomeHeader({}) {
           justifyContent: "center",
           alignItems: "center",
         }}
-
-        onPress={()=> [dbManager.test()]}
+        onPress={()=> {setSideMenuShown(true)}}
       >
         <Ionicons
           name="settings-sharp"
@@ -87,7 +88,9 @@ function HomeHeader({}) {
           color={colors.secondary}
           style={{ opacity: 0.7 }}
         />
+        
       </TouchableOpacity>
+      {sideMenuShown == true ? <SideMenu setShow={setSideMenuShown}/> : null}
     </SafeAreaView>
   );
 }
