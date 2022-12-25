@@ -19,6 +19,7 @@ function HomeScreen(props) {
   const [showNamePopUp, setShowNamePopUp] = useState(false);
   const [showCodePopUp, setShowCodePopUp] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
+
   const renderItems = () => {
     if (itemSelected == 0) {
       return <InstructionController setIsSelected={setItemSelected}/>
@@ -54,17 +55,18 @@ function HomeScreen(props) {
         setShowNamePopUp(true);
       });
     } else if (itemSelected == 4) {
-      dbManager.getCode().then((theCode) => {
-        setCode(theCode)
-        setShowCodePopUp(true);
+      dbManager.getCodeIfPaid().then((theCode) => {
+        console.log(theCode)
+        if(theCode){
+          setCode(theCode)
+          setShowCodePopUp(true);
+        }
       })
-      
     }
   }, [itemSelected]);
 
   return (
     <View style={{ flex: 1 }}>
-
       {renderItems()}
       {showNamePopUp ? (
         <EditTextPopUp

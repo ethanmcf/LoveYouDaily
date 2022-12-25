@@ -13,12 +13,20 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import Ionicons from "react-native-vector-icons/Ionicons"
 import AntDesign from "react-native-vector-icons/AntDesign"
 import { colors } from "../../common/styles";
+import dbManager from "../../management/database-manager";
 
 function InfoList({ setIsSelected }) {
   const [selected, setSelected] = useState(false);
   const [indexToAnimate, setIndexToAnimate] = useState(null);
+  const [isPaid, setIsPaid] = useState(null)
   const itemOpacityAnim = useRef(new Animated.Value(1)).current;
   const itemTranslateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(()=>{
+    dbManager.getPaid().then((value)=>{
+      setIsPaid(value)
+    })
+  },[selected])
 
   const styles = StyleSheet.create({
     container: {
@@ -89,7 +97,7 @@ function InfoList({ setIsSelected }) {
     },
     {
       title: "Shareable Code",
-      message: "Click for code to give to your partner",
+      message: isPaid == true ? "Send code to partner for login" : "Unlock with purchase",
       icon: (
         <MaterialIcons
           name="content-copy"

@@ -51,7 +51,7 @@ const AppNavigator = () => {
 
 
   //Returns no components if connecting to firebase
-  if (initializing){
+  if (userState == null){
     return <LoadSpinner/>
   }
 

@@ -95,7 +95,7 @@ function ContentList({ data, setIsSelected, setRender }) {
               }}
             >
               <TouchableOpacity
-                onPress={() => [setSelected(true), setIndexToAnimate(index), ]}
+                onPress={() => [setSelected(true), setIndexToAnimate(index)]}
                 disabled={selected}
               >
                 <ListItem number={item.number} title={item.title} completed={item.completed} description={item.description}/>

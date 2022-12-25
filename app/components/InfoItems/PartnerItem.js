@@ -189,7 +189,7 @@ function PartnerItem({ setIsSelected }) {
         />
         <CustomInput
           iconName="build"
-          holderText={"e.g. Merry Christmas"}
+          holderText={"i.e. Merry Christmas"}
           error={occasionError}
           setError={setOccasionError}
           isPassword={false}

@@ -95,7 +95,6 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
       setIsSelected(null);
     });
   };
-
   const handleSave = (theTitle) => {
     if (theTitle.length > 21) {
       Alert.alert("Title Issue", "Each title must be less than 21 characters!");

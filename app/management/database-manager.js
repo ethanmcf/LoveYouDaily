@@ -13,10 +13,20 @@ class DatabaseManager {
     this.db = database();
     this.storage = storage();
   }
-  test(){
+  logOutCurrentUser(){
     auth().signOut()
   }
-  //MARK: -  Content functions
+  async removeCurrentCreatorAccount(){
+    const user = auth().currentUser
+    const uid = user.uid
+    const code = await this.getCode();
+    this.db.ref(`content/${code}`).remove()
+    this.db.ref(`users/${uid}`).remove()
+    auth().signOut()
+    return user.delete()
+  }
+
+  // MARK: -  Content functions
   async getNotesContent() {
     const code = await this.getCode();
     const items = (
@@ -111,6 +121,19 @@ class DatabaseManager {
   }
 
   //MARK: - Get info functions
+  async getPaid(){
+    const UID = auth().currentUser.uid;
+    const paid = await this.db.ref(`users/${UID}/paid`).once('value')
+    return paid.val()
+  }
+  async getCodeIfPaid(){
+    const UID = auth().currentUser.uid;
+    const paid = (await this.db.ref(`users/${UID}/paid`).once('value')).val()
+    if(paid == true){
+      const code = (await this.db.ref(`users/${UID}/code`).once('value')).val()
+      return code
+    }
+  }
   async getCode() {
     const UID = auth().currentUser.uid;
     const snapshot = await this.db.ref(`users/${UID}/code`).once("value");
@@ -213,9 +236,7 @@ class DatabaseManager {
       });
     });
   }
-  deleteUser(user) {
-    user.delete();
-  }
+
   setOccasion(occasion) {
     this.getCode().then((code) => {
       this.db.ref(`content/${code}/occasion`).set(occasion);

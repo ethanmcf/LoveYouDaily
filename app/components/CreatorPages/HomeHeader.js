@@ -12,7 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import SideMenu from "../SideMenu";
 import dbManager from "../../management/database-manager";
 
-function HomeHeader({navigation}) {
+function HomeHeader() {
   const [sideMenuShown, setSideMenuShown] = useState(false)
   const [name, setName] = useState("");
   const userName = () => {
