@@ -98,7 +98,21 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
     });
   };
   const handleDeleteImage = () => {
-
+    rootDirectory = data.bucket
+    dbManager
+      .updateLookImage(rootDirectory, null, null)
+      .then((successDelete) => {
+        if(successDelete == true){
+          setCurrentImage(null);
+          setImageName(null);
+          refreshData();
+        }else{
+          Alert.alert(
+            "Error",
+            "There was an issue removing your image, please try again later."
+          );
+        }
+      })
   }
   const handleSave = () => {
     //Making sure title has proper length
@@ -282,8 +296,7 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
         <TouchableOpacity
           style={styles.clearButton}
           onPress={() => {
-            setCurrentImage(null);
-            setImageName(null);
+            handleDeleteImage()
           }}
         >
           <MaterialIcons name="clear" size={23} color={colors.red} />
