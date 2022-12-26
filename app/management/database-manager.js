@@ -57,9 +57,9 @@ class DatabaseManager {
     });
     return data;
   }
-  async updateNotesContent(bucket, title, content) {
+  async updateNotesContent(root, title, content) {
     const code = await this.getCode();
-    this.db.ref(`content/${code}/notesContent/${bucket}`).set({
+    this.db.ref(`content/${code}/notesContent/${root}`).set({
       title: title,
       content: content,
     });
@@ -104,7 +104,6 @@ class DatabaseManager {
     }
     return data;
   }
-
   async updateLookImage(directory, imageName, imagePath){
     //This func deletes and adds/changes image
     const code = await this.getCode();

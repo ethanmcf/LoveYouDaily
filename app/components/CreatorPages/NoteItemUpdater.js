@@ -34,10 +34,11 @@ function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
     if (showPopUp == true) {
       return (
         <EditTextPopUp
-          saveFunc={handleSave}
+          saveFunc={setTitle}
           placeholder={title}
           title="Edit Title"
           setShowPopUp={setShowPopUp}
+          buttonName="Confirm"
         />
       );
     }
@@ -51,18 +52,18 @@ function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
     }
   };
 
-  const handleSave = (theTitle, content = data.content) => {
-    if (theTitle.length > 21) {
+  const handleSave = () => {
+    if (title.length > 21) {
       Alert.alert("Title Issue", "Each title must be less than 21 characters!");
-    } else if (theTitle.length == 0) {
+    } else if (title.length == 0) {
       Alert.alert(
         "Title Issue",
         "Each title must contain at least one character!"
       );
     } else {
-      dbManager.updateNotesContent(data.bucket, theTitle, content).then(() => {
-        setTitle(theTitle);
-
+      rootDirectory = data.bucket
+      dbManager.updateTitle("notesContent", rootDirectory, title)
+      dbManager.updateNotesContent(rootDirectory, title, content).then(() => {
         setSucces(true);
         setTimeout(() => {
           refreshData();
@@ -196,7 +197,7 @@ function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
             <Ionicons name="arrow-back" size={24} color={colors.main} />
           </TouchableOpacity>
           <Text style={styles.numberFont}>{number}.</Text>
-          <EditableTitle title={title} setShowPopUp={setShowPopUp} />
+          <EditableTitle title={title} setShowPopUp={setShowPopUp}/>
           <View style={styles.boxInput}>
             <TextInput
               numberOfLines={20}
@@ -218,7 +219,7 @@ function NoteItemUpdater({ setIsSelected, data, number, refreshData }) {
               <TouchableOpacity
                 style={[styles.saveButton, button, shadow, { marginRight: 10 }]}
                 onPress={() => {
-                  handleSave(title, content);
+                  handleSave();
                 }}
               >
                 <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
