@@ -149,9 +149,11 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
       }, 2000);
     }
   };
-
   const handleTemplate = () => {
-    
+    dbManager.getTemplate("lookContent", number).then((template) => {
+      setCurrentTitle(template.title);
+      Alert.alert("Recommended photo",template.content)
+    });
   }
   const choosePhotoFromLibrary = () => {
     ImageCropPicker.openPicker({
