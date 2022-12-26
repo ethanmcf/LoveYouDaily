@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { colors } from "../../common/styles";
 import React from 'react'
-function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFunc, style }) {
+function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFunc, style, buttonName = "Save" }) {
   const translateUpValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(1)).current;
 
@@ -100,7 +100,7 @@ function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFun
         placeholder={noTextHolder}
       />
       <TouchableOpacity style={styles.saveButton} onPress={()=> {[saveFunc(input.trim()), reverseAnimation()]}}>
-        <Text style={[styles.font, { color: colors.main }]}>Save</Text>
+        <Text style={[styles.font, { color: colors.main }]}>{buttonName}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={{ height: 20, top: -10 }}

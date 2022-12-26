@@ -27,6 +27,10 @@ class DatabaseManager {
   }
 
   // MARK: -  Content functions
+  async updateTitle(contentType, directory, newTitle){
+    const code = await this.getCode();
+    this.db.ref(`content/${code}/${contentType}/${directory}/title`).set(newTitle)
+  }
   async getNotesContent() {
     const code = await this.getCode();
     const items = (
@@ -100,19 +104,20 @@ class DatabaseManager {
     }
     return data;
   }
-  async updateLookContent(bucket, title, imageName, imagePath) {
-    //Updates database
+
+  async updateLookImage(directory, imageName, imagePath){
+    //This func deletes and adds/changes image
     const code = await this.getCode();
     let oldImageName = (
-      await this.db.ref(`content/${code}/lookContent/${bucket}`).once("value")
-    ).val().content;
-    this.db.ref(`content/${code}/lookContent/${bucket}`).set({
-      title: title,
-      content: imagePath == null ? "" : imageName,
-    });
+      await this.db.ref(`content/${code}/lookContent/${directory}/content`).once("value")
+    ).val()
+    
+    //Update db
+    this.db.ref(`content/${code}/lookContent/${directory}/content`).set(imageName)
 
-    //Updates storage
+    //UpdateStorage
     this.deleteStorageItem(oldImageName);
+    //Only add image to storage if we are changing/adding image not deleting
     if(imagePath != null){
       const successUpload = await this.uploadToStorage(imagePath, imageName);
       return successUpload;

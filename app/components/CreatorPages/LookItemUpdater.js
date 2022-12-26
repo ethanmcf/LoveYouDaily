@@ -21,9 +21,9 @@ import dbManager from "../../management/database-manager";
 import { AppContext } from "../../management/globals";
 
 function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
-  const [image, setImage] = useState(data.content);
+  const [currentImage, setCurrentImage] = useState(data.content);
   const [imageName, setImageName] = useState(null);
-  const [title, setTitle] = useState(data.title.trim());
+  const [currentTitle, setCurrentTitle] = useState(data.title.trim());
   const [showPopUp, setShowPopUp] = useState(false);
 
   const { signing, successful, loading } = useContext(AppContext);
@@ -31,9 +31,10 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
   const [isLoading, setIsLoading] = loading
 
   const translateValue = useRef(new Animated.Value(0)).current;
-  const imageRatio = 1.33;
+  
 
   const imageDimensions = () => {
+    const imageRatio = 1.33;
     const windowWidth = Dimensions.get("window").width * 0.95;
     const windowHeight = Dimensions.get("window").height * 0.95;
     const ratio = (windowHeight - 140 - 2 - 145 + 15) / (windowWidth + 55);
@@ -45,10 +46,11 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
     if (showPopUp == true) {
       return (
         <EditTextPopUp
-          saveFunc={handleSave}
-          placeholder={title}
+          saveFunc={setCurrentTitle}
+          placeholder={currentTitle}
           title="Edit Title"
           setShowPopUp={setShowPopUp}
+          buttonName="Confirm"
         />
       );
     }
@@ -73,7 +75,7 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
   const imageComp = () => {
     return (
       <Image
-        source={{ uri: image }}
+        source={{ uri: currentImage }}
         style={[
           {
             width: imageDimensions().width,
@@ -95,35 +97,45 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
       setIsSelected(null);
     });
   };
-  const handleSave = (theTitle) => {
-    if (theTitle.length > 21) {
+  const handleDeleteImage = () => {
+
+  }
+  const handleSave = () => {
+    //Making sure title has proper length
+    if (currentTitle.length > 21) {
       Alert.alert("Title Issue", "Each title must be less than 21 characters!");
-    } else if (theTitle.length == 0) {
+    } else if (currentTitle.length == 0) {
       Alert.alert(
         "Title Issue",
         "Each title must contain at least one character!"
       );
+    // Title is proper so db can be updated
     } else {
-      dbManager
-        .updateLookContent(data.bucket, theTitle, imageName, image)
-        .then((successfulUpload) => {
-          if (successfulUpload == false) {
-            Alert.alert(
-              "Error",
-              "There was an issue uploading your image, please try again later."
-            );
-            setImage(null);
-            setImageName(null);
-          } else {
-            setTitle(theTitle);
-            setSucces(true);
-            setTimeout(() => {
-              refreshData();
-            }, 2000);
-          }
-        });
+      rootDirectory = data.bucket
+      dbManager.updateTitle("lookContent", rootDirectory, currentTitle)
+      if(imageName != null){ //Checks if user has selected a new image (if not don't update image)
+        dbManager
+          .updateLookImage(rootDirectory, imageName, currentImage)
+          .then((successfulUpload) => {
+            //Error uploading image to db
+            if (successfulUpload == false) {
+              Alert.alert(
+                "Error",
+                "There was an issue uploading your image, please try again later."
+              );
+              setCurrentImage(null);
+              setImageName(null);
+              return //cut function off
+            }
+          })
+      }
+      setSucces(true);
+      setTimeout(() => {
+        refreshData();
+      }, 2000);
     }
   };
+
   const handleTemplate = () => {
     
   }
@@ -136,7 +148,7 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
       .then((image) => {
         const filename = image.filename ? image.filename : image.path.substring(image.path.lastIndexOf('/') + 1)
         setImageName(filename);
-        setImage(image.path);
+        setCurrentImage(image.path);
       })
       .catch((error) => {});
   };
@@ -238,16 +250,16 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
         </TouchableOpacity>
 
         <Text style={styles.numberFont}>{number}.</Text>
-        <EditableTitle title={title} setShowPopUp={setShowPopUp} />
+        <EditableTitle title={currentTitle} setShowPopUp={setShowPopUp} />
 
-        {image == null ? uploadImageComp() : imageComp()}
+        {currentImage == null ? uploadImageComp() : imageComp()}
 
         <View style={styles.buttonContainer}>
           <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
               style={[styles.saveButton, button, shadow, { marginRight: 10 }]}
               onPress={() => {
-                handleSave(title);
+                handleSave();
               }}
             >
               <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
@@ -270,7 +282,7 @@ function LookItemUpdater({ setIsSelected, data, number, refreshData }) {
         <TouchableOpacity
           style={styles.clearButton}
           onPress={() => {
-            setImage(null);
+            setCurrentImage(null);
             setImageName(null);
           }}
         >
