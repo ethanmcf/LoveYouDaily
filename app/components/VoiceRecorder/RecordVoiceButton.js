@@ -4,12 +4,12 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import React from 'react'
 import { colors } from "../../common/styles";
 
-function PlayButton({isRecording, setIsRecording}) {
+function PlayButton({recordState, setState, icon}) {
     const pulseAnim = useRef(new Animated.Value(1)).current;
     const innerCircleAmin = useRef(new Animated.Value(1)).current;
 
     useEffect(()=>{
-      if(isRecording){
+      if(recordState == "record"){
         beforeRecordingAnim().start()
       }else{
         beforeRecordingAnim().stop()
@@ -19,7 +19,7 @@ function PlayButton({isRecording, setIsRecording}) {
           useNativeDriver: true
         }).start()
       }
-    }, [isRecording])
+    }, [recordState])
 
     const beforeRecordingAnim = () => {
       return Animated.loop(
@@ -38,6 +38,17 @@ function PlayButton({isRecording, setIsRecording}) {
       );
     };
 
+    const handleStateChange = () => {
+      let newState = ""
+      if(recordState == null){
+        newState = "record"
+      }else if (recordState == "play"){
+        newState = "pause"
+      }else{
+        newState = "play"
+      }
+      setState(newState)
+    }
 
     const styles = StyleSheet.create({
       container: {
@@ -67,13 +78,13 @@ function PlayButton({isRecording, setIsRecording}) {
     });
     return (
       <TouchableOpacity
-        onPress={() => setIsRecording(!isRecording)}
+        onPress={() => handleStateChange()}
         style={styles.container}
       >
         <Animated.View style={styles.largeCircle} />
   
         <Animated.View style={styles.innerCircle}>
-          <Ionicons name="mic" size={22} color="white" />
+          <Ionicons name={icon} size={22} color="white" />
         </Animated.View>
       </TouchableOpacity>
     );

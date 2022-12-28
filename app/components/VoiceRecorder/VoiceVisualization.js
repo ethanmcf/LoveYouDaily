@@ -5,7 +5,7 @@ import React from 'react'
 
 
 
-function VoiceVisualization({isRecording}) {
+function VoiceVisualization({}) {
     const barWidth = 5
     const numIncrements = 7
     let animationList = []
@@ -85,8 +85,6 @@ function VoiceVisualization({isRecording}) {
             alignItems:"center",
             flexDirection:"row",
             overflow:"visible",
-
-
         },
         bar:{
             width: barWidth,

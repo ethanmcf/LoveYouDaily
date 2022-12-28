@@ -10,34 +10,37 @@ import {
   TextInput,
 } from "react-native";
 import { button, colors, shadow, titleFont } from "../../common/styles";
-import Ionicons from "react-native-vector-icons/Ionicons"
-import MaterialIcons from "react-native-vector-icons/MaterialIcons"
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import RecordVoiceButton from "../VoiceRecorder/RecordVoiceButton";
 import VoiceVisualization from "../VoiceRecorder/VoiceVisualization";
 import CircleTimer from "../CircleTimer";
 import EditableTitle from "./EditableTitle";
 import EditTextPopUp from "./EditTextPopUp";
 import { translateToValue } from "../../common/values";
-import React from 'react'
+import React from "react";
+import Counter from "../Counter";
 function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
-  const maxSeconds = 13;
+  const maxSeconds = 59;
   const translateValue = useRef(new Animated.Value(0)).current;
-  const textAnimValue = useRef(new Animated.Value(1)).current
-  const [isRecording, setIsRecording] = useState(false);
-  const [seconds, setSeconds] = useState(0);
-  
-  const [showPopUp, setShowPopUp] = useState(false)
+  const visualizeOpacityValue = useRef(new Animated.Value(0)).current;
+  const playButtonValue = useRef(new Animated.Value(0)).current;
+  const [recordState, setRecordState] = useState(null); //null, record, play, pause
+  const [audioLength, setAudioLength] = useState(0);
+  const [showPopUp, setShowPopUp] = useState(false);
 
   const popUp = () => {
-    if(showPopUp == true){
-        return <EditTextPopUp 
-          placeholder="title" 
-          title="Edit Title" 
-          setShowPopUp={setShowPopUp} 
+    if (showPopUp == true) {
+      return (
+        <EditTextPopUp
+          placeholder="title"
+          title="Edit Title"
+          setShowPopUp={setShowPopUp}
           buttonName="Confirm"
         />
+      );
     }
-  }
+  };
   const reverseAnimation = () => {
     Animated.timing(translateValue, {
       toValue: -translateToValue(),
@@ -48,9 +51,36 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     });
   };
 
-  const showVisualizationAnim = () => {
-
-  }
+  const visualizationAnim = (show) => {
+    if (show) {
+      Animated.parallel([
+        Animated.timing(visualizeOpacityValue, {
+          toValue: 1,
+          duration: 750,
+          delay: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playButtonValue, {
+          toValue: -30,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(visualizeOpacityValue, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playButtonValue, {
+          toValue: 0,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
 
   useEffect(() => {
     Animated.timing(translateValue, {
@@ -59,22 +89,15 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
       useNativeDriver: true,
     }).start();
   });
-  useEffect(() => {
-    secondInterval();
-  });
 
-  secondInterval = () => {
-    let myInterval = setInterval(() => {
-      clearInterval(myInterval);
-      if (isRecording) {
-        if (seconds < maxSeconds) {
-          setSeconds(seconds + 1);
-        } else {
-          setIsRecording(false);
-        }
-      }
-    }, 1000);
-  };
+  useEffect(() => {
+    //Visualization Animation
+    if (recordState == "pause") {
+      visualizationAnim(true);
+    } else if (recordState == "play") {
+      visualizationAnim(false);
+    }
+  }, [recordState]);
 
   const styles = StyleSheet.create({
     container: {
@@ -141,8 +164,14 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     recordContainer: {
       width: "100%",
       height: 259,
+      transform: [{ translateY: playButtonValue }],
       justifyContent: "center",
       alignItems: "center",
+    },
+    visualizerContainer: {
+      opacity: visualizeOpacityValue,
+      position: "absolute",
+      bottom: -64,
     },
     titleContainer: {
       position: "absolute",
@@ -152,13 +181,8 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
       alignItems: "center",
       flexDirection: "row",
     },
-    secondsText:{
-      color:colors.darkGrey, 
-      top:25,
-      opacity: 0.85,
-      fontWeight: "bold",
-    }
   });
+
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.background]}>
@@ -168,21 +192,41 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
         >
           <Ionicons name="arrow-back" size={24} color={colors.main} />
         </TouchableOpacity>
-        <CircleTimer seconds={maxSeconds}/>
         <Text style={styles.numberFont}>{number}.</Text>
 
-        <EditableTitle index={number} title="Listen"  setShowPopUp={setShowPopUp}/>
+        <EditableTitle
+          index={number}
+          title="Listen"
+          setShowPopUp={setShowPopUp}
+        />
 
-        <View style={styles.recordContainer}>
+        <Animated.View style={styles.recordContainer}>
+          <CircleTimer seconds={maxSeconds} recordState={recordState} audioLength={audioLength}/>
           <View>
             <RecordVoiceButton
-              isRecording={isRecording}
-              setIsRecording={setIsRecording}
+              recordState={recordState}
+              setState={setRecordState}
+              icon={
+                recordState == "play"
+                  ? "play"
+                  : recordState == "pause"
+                  ? "pause"
+                  : "mic"
+              }
             />
-            <Animated.Text style={styles.secondsText}>{maxSeconds - seconds} seconds</Animated.Text>
+            <Counter
+              maxSeconds={maxSeconds}
+              recordState={recordState}
+              setRecordState={setRecordState}
+              setAudioLength={setAudioLength}
+              audioLength = {audioLength}
+            />
           </View>
-          {isRecording ? <VoiceVisualization isRecording={isRecording}/> : null}
-        </View>
+
+          <Animated.View style={styles.visualizerContainer}>
+            <VoiceVisualization />
+          </Animated.View>
+        </Animated.View>
 
         <View style={styles.buttonContainer}>
           <View style={{ flexDirection: "row" }}>
@@ -212,14 +256,13 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
         <TouchableOpacity
           style={styles.clearButton}
           onPress={() => {
-            handleDeleteImage()
+            setRecordState(null);
           }}
         >
           <MaterialIcons name="clear" size={23} color={colors.red} />
         </TouchableOpacity>
 
         {popUp()}
-
       </Animated.View>
     </View>
   );
