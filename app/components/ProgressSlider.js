@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { colors, shadow } from "../common/styles";
 import React from 'react'
-function ProgressSlider({ seconds, maxSeconds, isRecording }) {
+function ProgressSlider({ seconds, maxSeconds, isRecording, style }) {
   const moveProgressBarValue = useRef(new Animated.Value(0)).current;
   const barHeight = 9;
 
@@ -69,7 +69,7 @@ function ProgressSlider({ seconds, maxSeconds, isRecording }) {
   });
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.progressContainer}>
         <View style={[styles.progressBarContainer]}>
           <Animated.View style={styles.progressBar} />

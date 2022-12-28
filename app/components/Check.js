@@ -59,7 +59,7 @@ function Check(props) {
         const maxPercentage = (100 * v.value) / max;
         const strokeDashoffset =
           circleCircumference - (circleCircumference * maxPercentage) / 100;
-        circleRef.current.setNativeProps({
+          circleRef.current.setNativeProps({
           strokeDashoffset,
         });
       }

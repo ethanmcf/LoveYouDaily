@@ -14,7 +14,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import RecordVoiceButton from "../VoiceRecorder/RecordVoiceButton";
 import VoiceVisualization from "../VoiceRecorder/VoiceVisualization";
-import ProgressSlider from "../ProgressSlider";
+import CircleTimer from "../CircleTimer";
 import EditableTitle from "./EditableTitle";
 import EditTextPopUp from "./EditTextPopUp";
 import { translateToValue } from "../../common/values";
@@ -22,6 +22,7 @@ import React from 'react'
 function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
   const maxSeconds = 13;
   const translateValue = useRef(new Animated.Value(0)).current;
+  const textAnimValue = useRef(new Animated.Value(1)).current
   const [isRecording, setIsRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   
@@ -46,6 +47,10 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
       setIsSelected(null);
     });
   };
+
+  const showVisualizationAnim = () => {
+
+  }
 
   useEffect(() => {
     Animated.timing(translateValue, {
@@ -147,8 +152,13 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
       alignItems: "center",
       flexDirection: "row",
     },
+    secondsText:{
+      color:colors.darkGrey, 
+      top:25,
+      opacity: 0.85,
+      fontWeight: "bold",
+    }
   });
-
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.background]}>
@@ -158,23 +168,18 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
         >
           <Ionicons name="arrow-back" size={24} color={colors.main} />
         </TouchableOpacity>
-
+        <CircleTimer seconds={maxSeconds}/>
         <Text style={styles.numberFont}>{number}.</Text>
 
         <EditableTitle index={number} title="Listen"  setShowPopUp={setShowPopUp}/>
 
         <View style={styles.recordContainer}>
-        <ProgressSlider
-            seconds={seconds}
-            maxSeconds={maxSeconds}
-            isRecording={isRecording}
-          />
           <View>
             <RecordVoiceButton
               isRecording={isRecording}
               setIsRecording={setIsRecording}
             />
-            <Text style={{opacity: 0.76, top:25}}>{maxSeconds - seconds} sec left</Text>
+            <Animated.Text style={styles.secondsText}>{maxSeconds - seconds} seconds</Animated.Text>
           </View>
           {isRecording ? <VoiceVisualization isRecording={isRecording}/> : null}
         </View>
