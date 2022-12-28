@@ -10,8 +10,16 @@ import {
   Keyboard,
 } from "react-native";
 import { colors } from "../../common/styles";
-import React from 'react'
-function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFunc, style, buttonName = "Save" }) {
+import React from "react";
+function EditTextPopUp({
+  setShowPopUp,
+  title,
+  placeholder,
+  noTextHolder,
+  saveFunc,
+  style,
+  buttonName = "Save",
+}) {
   const translateUpValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(1)).current;
 
@@ -27,7 +35,7 @@ function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFun
       duration: 200,
       useNativeDriver: true,
     }).start();
-    setInput(placeholder)
+    setInput(placeholder);
   }, [null]);
 
   const reverseAnimation = () => {
@@ -49,11 +57,11 @@ function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFun
   };
 
   const styles = StyleSheet.create({
-    focusContainer:{
+    focusContainer: {
       width: Dimensions.get("window").width,
-      height: Dimensions.get("window").height*4,
+      height: Dimensions.get("window").height * 4,
       top: translateToValue(),
-      position:"absolute",
+      position: "absolute",
     },
     container: {
       borderRadius: 10,
@@ -90,16 +98,21 @@ function EditTextPopUp({ setShowPopUp, title, placeholder, noTextHolder, saveFun
 
   return (
     <Animated.View style={[styles.container, style]}>
-      <View style={styles.focusContainer}/>
+      <View style={styles.focusContainer} />
       <Text style={styles.font}>{title}</Text>
       <TextInput
-        style={[styles.input, {height: 40}]}
+        style={[styles.input, { height: 40 }]}
         autoFocus={true}
         value={input}
         onChangeText={(text) => [setInput(text)]}
         placeholder={noTextHolder}
       />
-      <TouchableOpacity style={styles.saveButton} onPress={()=> {[saveFunc(input.trim()), reverseAnimation()]}}>
+      <TouchableOpacity
+        style={styles.saveButton}
+        onPress={() => {
+          [saveFunc(input.trim()), reverseAnimation()];
+        }}
+      >
         <Text style={[styles.font, { color: colors.main }]}>{buttonName}</Text>
       </TouchableOpacity>
       <TouchableOpacity

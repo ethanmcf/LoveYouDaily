@@ -8,6 +8,7 @@ import {
   Animated,
   Dimensions,
   TextInput,
+  Alert
 } from "react-native";
 import { button, colors, shadow, titleFont } from "../../common/styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -18,6 +19,7 @@ import CircleTimer from "../CircleTimer";
 import EditableTitle from "./EditableTitle";
 import EditTextPopUp from "./EditTextPopUp";
 import { translateToValue } from "../../common/values";
+import dbManager from "../../management/database-manager";
 import React from "react";
 import Counter from "../Counter";
 function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
@@ -28,12 +30,14 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
   const [recordState, setRecordState] = useState(null); //null, record, play, pause
   const [audioLength, setAudioLength] = useState(0);
   const [showPopUp, setShowPopUp] = useState(false);
+  const [currentTitle, setCurrentTitle] = useState(data.title.trim())
 
   const popUp = () => {
     if (showPopUp == true) {
       return (
         <EditTextPopUp
-          placeholder="title"
+          placeholder={currentTitle}
+          saveFunc={setCurrentTitle}
           title="Edit Title"
           setShowPopUp={setShowPopUp}
           buttonName="Confirm"
@@ -98,6 +102,13 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
       visualizationAnim(false);
     }
   }, [recordState]);
+
+  const handleTemplate = () => {
+    dbManager.getTemplate("listenContent", number).then((template) => {
+      setCurrentTitle(template.title);
+      Alert.alert("Audio Message",template.content)
+    });
+  }
 
   const styles = StyleSheet.create({
     container: {
@@ -196,7 +207,7 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
 
         <EditableTitle
           index={number}
-          title="Listen"
+          title={currentTitle}
           setShowPopUp={setShowPopUp}
         />
 
