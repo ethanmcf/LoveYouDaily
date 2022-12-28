@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Animated, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Animated, TouchableOpacity, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons"
 import React from 'react'
 import { colors } from "../../common/styles";
@@ -43,7 +43,7 @@ function PlayButton({isRecording, setIsRecording}) {
       container: {
         justifyContent: "center",
         alignItems: "center",
-        transform: [{scale: 1.2}]
+        transform: [{scale: 1.5}]
       },
       largeCircle: {
         borderRadius: 40,
@@ -51,7 +51,6 @@ function PlayButton({isRecording, setIsRecording}) {
         width: 55,
         height: 55,
         opacity: 0.5,
-        position: "absolute",
         transform: [{ scale: pulseAnim }],
       },
       innerCircle: {

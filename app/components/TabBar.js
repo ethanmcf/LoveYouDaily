@@ -11,6 +11,7 @@ import ProgressHeader from "./CreatorPages/ProgressHeader";
 import HomeHeader from "./CreatorPages/HomeHeader";
 import dbManager from "../management/database-manager";
 import React from 'react'
+import ListenItemUpdater from "./CreatorPages/ListenItemUpdater";
 const Tab = createBottomTabNavigator();
 
 function TabBar(props) {
@@ -29,12 +30,6 @@ function TabBar(props) {
       </View>
     );
   };
-
-  const data = () => {
-    dbManager.getContent("notesContent").then((data) => {
-      return data
-    })
-  }
   const styles = StyleSheet.create({
     container: {
       position: "absolute",

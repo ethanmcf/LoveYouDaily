@@ -56,7 +56,6 @@ function HomeScreen(props) {
       });
     } else if (itemSelected == 4) {
       dbManager.getCodeIfPaid().then((theCode) => {
-        console.log(theCode)
         if(theCode){
           setCode(theCode)
           setShowCodePopUp(true);

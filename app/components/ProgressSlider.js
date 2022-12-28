@@ -34,7 +34,6 @@ function ProgressSlider({ seconds, maxSeconds, isRecording }) {
   const styles = StyleSheet.create({
     container: {
       width: "80%",
-      top: 30,
     },
     progressContainer: {
       marginTop: 10,

@@ -21,12 +21,12 @@ function EditableTitle({ title, setShowPopUp }) {
   return (
     <TouchableNativeFeedback onPress={() => [setShowPopUp(true)]}>
       <View style={[styles.titleContainer]}>
-        <Text style={[titleFont, {fontSize: 22, height: 40}]}>{title}</Text>
+        <Text style={[titleFont, {fontSize: 22, height: 27}]}>{title}</Text>
         <MaterialIcons
           name="edit"
           size={18}
           color={colors.secondary}
-          style={{ top: 2, left: 10, opacity: 0.2 }}
+          style={{left: 10, opacity: 0.2 }}
         />
       </View>
 

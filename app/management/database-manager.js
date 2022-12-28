@@ -124,7 +124,48 @@ class DatabaseManager {
     return true
   }
 
-  //MARK: - Get info functions
+  async getListenContent() {
+    let data = [];
+    const code = await this.getCode();
+    const items = (
+      await this.db.ref(`content/${code}/listenContent`).once("value")
+    ).val();
+    const length = Object.entries(items).length;
+
+    for (let i = 0; i < length; i++) {
+      let imageURL;
+
+      const item = Object.entries(items)[i];
+      const title = item[1].title;
+      const imageName = item[1].content;
+      const bucket = item[0];
+      const ref = this.storage.ref(`${code}/lookContent/${imageName}`);
+
+      await ref
+        .getDownloadURL()
+        .then((url) => {
+          imageURL = url;
+        })
+        .catch(() => {
+          imageURL = null;
+        });
+
+      data.push({
+        number: 1 + i,
+        bucket: bucket,
+        title: title,
+        description: imageName,
+        content: imageURL,
+        completed:
+          imageName != null && imageName != "" && title.trim() != lookTitle
+            ? true
+            : false,
+      });
+    }
+    return data;
+  }
+
+  // MARK: - Get info functions  
   async getPaid(){
     const UID = auth().currentUser.uid;
     const paid = await this.db.ref(`users/${UID}/paid`).once('value')

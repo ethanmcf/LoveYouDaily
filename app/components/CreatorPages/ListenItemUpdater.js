@@ -20,18 +20,23 @@ import EditTextPopUp from "./EditTextPopUp";
 import { translateToValue } from "../../common/values";
 import React from 'react'
 function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
-  const maxSeconds = 10;
+  const maxSeconds = 13;
   const translateValue = useRef(new Animated.Value(0)).current;
   const [isRecording, setIsRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   
   const [showPopUp, setShowPopUp] = useState(false)
+
   const popUp = () => {
     if(showPopUp == true){
-        return <EditTextPopUp placeholder="title" title="Edit Title" setShowPopUp={setShowPopUp}/>
+        return <EditTextPopUp 
+          placeholder="title" 
+          title="Edit Title" 
+          setShowPopUp={setShowPopUp} 
+          buttonName="Confirm"
+        />
     }
   }
-
   const reverseAnimation = () => {
     Animated.timing(translateValue, {
       toValue: -translateToValue(),
@@ -49,7 +54,6 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
       useNativeDriver: true,
     }).start();
   });
-
   useEffect(() => {
     secondInterval();
   });
@@ -94,9 +98,15 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
       alignItems: "center",
       justifyContent: "center",
     },
-    saveButton: {
+    buttonContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
       position: "absolute",
       bottom: 25,
+      left: 25,
+    },
+    saveButton: {
       width: 100,
       height: 28,
     },
@@ -125,10 +135,9 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     },
     recordContainer: {
       width: "100%",
-      height: 50,
-      justifyContent: "space-around",
+      height: 259,
+      justifyContent: "center",
       alignItems: "center",
-      top: -10,
     },
     titleContainer: {
       position: "absolute",
@@ -152,24 +161,55 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
 
         <Text style={styles.numberFont}>{number}.</Text>
 
-        <EditableTitle index={number} type="listen" title="Listen"  setShowPopUp={setShowPopUp}/>
+        <EditableTitle index={number} title="Listen"  setShowPopUp={setShowPopUp}/>
 
         <View style={styles.recordContainer}>
-          <RecordVoiceButton
-            isRecording={isRecording}
-            setIsRecording={setIsRecording}
-          />
-          <ProgressSlider
+        <ProgressSlider
             seconds={seconds}
             maxSeconds={maxSeconds}
             isRecording={isRecording}
           />
+          <View>
+            <RecordVoiceButton
+              isRecording={isRecording}
+              setIsRecording={setIsRecording}
+            />
+            <Text style={{opacity: 0.76, top:25}}>{maxSeconds - seconds} sec left</Text>
+          </View>
+          {isRecording ? <VoiceVisualization isRecording={isRecording}/> : null}
         </View>
 
-        <TouchableOpacity style={[styles.saveButton, button, shadow]}>
-          <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.clearButton}>
+        <View style={styles.buttonContainer}>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={[styles.saveButton, button, shadow, { marginRight: 10 }]}
+              onPress={() => {
+                handleSave();
+              }}
+            >
+              <Text style={{ fontSize: 12, opacity: 0.8 }}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.saveButton,
+                button,
+                shadow,
+                { backgroundColor: colors.secondary },
+              ]}
+              onPress={() => {
+                handleTemplate();
+              }}
+            >
+              <Text style={{ fontSize: 12, opacity: 0.8 }}>Template</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.clearButton}
+          onPress={() => {
+            handleDeleteImage()
+          }}
+        >
           <MaterialIcons name="clear" size={23} color={colors.red} />
         </TouchableOpacity>
 

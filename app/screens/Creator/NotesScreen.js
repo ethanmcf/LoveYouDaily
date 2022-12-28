@@ -6,6 +6,7 @@ import dbManager from "../../management/database-manager";
 import ProgressHeader from "../../components/CreatorPages/ProgressHeader";
 import React from 'react'
 import { AppContext } from "../../management/globals";
+
 function NotesScreen(props) {
   const [itemSelectedIndex, setItemSelected] = useState(null);
   const [renderItem, setRenderItem] = useState(null);
@@ -18,7 +19,6 @@ function NotesScreen(props) {
       setData(contentData)
     });
   };
-
 
   useEffect(() => {
     if (data == null) {
