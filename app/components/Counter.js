@@ -35,14 +35,15 @@ export default function Counter({
           setRecordState("play");
         }
       }
-      //If state changes to not record or pause
+      //If state changes to that is not record or pause
     } else {
       setCounter(0);
     }
   });
 
   useEffect(() => {
-    if (recordState == "play" && counter != 0) {
+    if (recordState == "play" && audioLength == 0) {
+      console.log(counter)
       setAudioLength(counter);
     }
   }, [recordState]);

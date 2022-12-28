@@ -23,7 +23,7 @@ import dbManager from "../../management/database-manager";
 import React from "react";
 import Counter from "../Counter";
 function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
-  const maxSeconds = 59;
+  const maxSeconds = 20;
   const translateValue = useRef(new Animated.Value(0)).current;
   const visualizeOpacityValue = useRef(new Animated.Value(0)).current;
   const playButtonValue = useRef(new Animated.Value(0)).current;
@@ -98,7 +98,7 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     //Visualization Animation
     if (recordState == "pause") {
       visualizationAnim(true);
-    } else if (recordState == "play") {
+    } else{
       visualizationAnim(false);
     }
   }, [recordState]);
