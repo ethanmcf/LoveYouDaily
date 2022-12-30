@@ -52,7 +52,7 @@ function PlayButton({ recordState, setState, icon }) {
     if (recordState == null) {
       setState("record");
     } else if (recordState == "play") {
-      setState("pause");
+        setState("pause");
     } else {
       setState("play");
     }

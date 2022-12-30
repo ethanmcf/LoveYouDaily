@@ -11,8 +11,7 @@ color = colors.secondary;
 max = 100;
 strokeOpacity = 1;
 
-function CircleTimer({ seconds, recordState, audioLength}) {
-
+function CircleTimer({ seconds, recordState, audioLength, needDelay}) {
   const duration = seconds * 1000;
   const animatedValue = useRef(new Animated.Value(0)).current;
   const animatedValue2 = useRef(new Animated.Value(0)).current;
@@ -36,7 +35,7 @@ function CircleTimer({ seconds, recordState, audioLength}) {
   };
   const animate2 = (toValue) => {
     return Animated.timing(animatedValue2, {
-      delay: 800,
+      delay: 400,
       toValue: toValue,
       duration: audioLength * 1000 - 100,
       useNativeDriver: true,
@@ -58,18 +57,22 @@ function CircleTimer({ seconds, recordState, audioLength}) {
         }
       });
     } else if (recordState == "pause") {
-      animate2(percentage).start();
-      animatedValue2.addListener((v) => {
-        if (circleRef2?.current) {
-          const maxPercentage = (100 * v.value) / max;
-          const strokeDashoffset =
-            circleCircumference -
-            (currentProgress * maxPercentage) / percentage;
-          circleRef2.current.setNativeProps({
-            strokeDashoffset,
-          });
-        }
-      });
+      timeDelay = needDelay ? 400 : 0
+      setTimeout(() => {
+        animate2(percentage).start();
+        animatedValue2.addListener((v) => {
+          if (circleRef2?.current) {
+            const maxPercentage = (100 * v.value) / max;
+            const strokeDashoffset =
+              circleCircumference -
+              (currentProgress * maxPercentage) / percentage;
+            circleRef2.current.setNativeProps({
+              strokeDashoffset,
+            });
+          }
+        });
+      }, timeDelay)
+      
     }else if(recordState == null){
       animate(0).reset();
     }else{

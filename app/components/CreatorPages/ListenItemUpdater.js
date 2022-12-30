@@ -39,10 +39,10 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
   const [showPopUp, setShowPopUp] = useState(false);
   const [currentTitle, setCurrentTitle] = useState(data.title.trim());
   const [filePath, setFilePath] = useState(data.content[0]);
+  const [fileName, setFileName] = useState(null);
 
   const { signing, successful, loading } = useContext(AppContext);
   const [success, setSucces] = successful;
-
 
   const popUp = () => {
     if (showPopUp == true) {
@@ -73,7 +73,7 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
         Animated.timing(visualizeOpacityValue, {
           toValue: 1,
           duration: 750,
-          delay: 150,
+          delay: data.content[0] != null && fileName == null ? 500 : 150,
           useNativeDriver: true,
         }),
         Animated.timing(playButtonValue, {
@@ -117,11 +117,17 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     if (recordState == "record") {
       setTimeout(() => {
         audioManager
-        .onStartRecord("test", setRecordState, maxSeconds, setAudioLength)
-        .then((path) => {
-          setFilePath(path);
-        });
-      }, 3500)
+          .onStartRecord(
+            `audio${number}`,
+            setRecordState,
+            maxSeconds,
+            setAudioLength
+          )
+          .then((path) => {
+            setFilePath(path);
+            setFileName(`audio_file_${number}.m4a`);
+          });
+      }, 3100);
     } else if (recordState == "play") {
       if (audioLength == 0) {
         audioManager.onStopRecord(setAudioLength);
@@ -138,6 +144,7 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     setRecordState(null);
     audioManager.onStopPlay();
     setAudioLength(0);
+    setFileName(null);
   };
 
   const handleSave = () => {
@@ -152,18 +159,20 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     } else {
       directory = data.bucket;
       dbManager.updateTitle("listenContent", directory, currentTitle);
-      dbManager
-        .updateListenContent(directory, "testing", filePath, audioLength)
-        .then((success) => {
-          if (success == false) {
-            Alert.alert(
-              "Error",
-              "There was an issue uploading your image, please try again later."
-            );
-            handleDelete();
-            return; //cut function off
-          }
-        });
+      if (fileName != null) {
+        dbManager
+          .updateListenContent(directory, fileName, filePath, audioLength)
+          .then((success) => {
+            if (success == false) {
+              Alert.alert(
+                "Error",
+                "There was an issue uploading your image, please try again later."
+              );
+              handleDelete();
+              return; //cut function off
+            }
+          });
+      }
       setSucces(true);
       setTimeout(() => {
         refreshData();
@@ -284,6 +293,7 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
             seconds={maxSeconds}
             recordState={recordState}
             audioLength={audioLength}
+            needDelay={data.content[0] != null && fileName == null}
           />
           <View>
             <RecordVoiceButton
@@ -297,7 +307,11 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
                   : "mic"
               }
             />
-            <Counter maxSeconds={maxSeconds} recordState={recordState} />
+            <Counter
+              maxSeconds={maxSeconds}
+              recordState={recordState}
+              needDelay={data.content[0] != null && fileName == null}
+            />
           </View>
 
           <Animated.View style={styles.visualizerContainer}>

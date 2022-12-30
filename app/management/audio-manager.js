@@ -22,8 +22,8 @@ class AudioManager {
     };
     const uri = await this.audioRecorderPlayer.startRecorder(path, audioSet);
     this.audioRecorderPlayer.addRecordBackListener((e) => {
-      current_pos = this.audioRecorderPlayer.mmssss(e.currentPosition).split(":")[1]
-      this.timeInSeconds = parseInt(current_pos)
+      current_pos = this.audioRecorderPlayer.mmssss(e.currentPosition).split(":")
+      this.timeInSeconds = parseFloat(current_pos[1]) + parseFloat(current_pos[2]/100)
       if(this.timeInSeconds == maxTime){
         setRecordState("play")
         setAudioLength(maxTime)
@@ -33,27 +33,19 @@ class AudioManager {
   };
 
   onStopRecord = async (setAudioLength) => {
-    const result = await this.audioRecorderPlayer.stopRecorder();
+    this.audioRecorderPlayer.stopRecorder();
     setAudioLength(this.timeInSeconds)
     this.audioRecorderPlayer.removeRecordBackListener();
   };
 
   onStartPlay = async (path, setRecordState) => {
-    const msg = await this.audioRecorderPlayer.startPlayer(path);
+    this.audioRecorderPlayer.startPlayer(path)
     this.audioRecorderPlayer.setVolume(1.0);
     this.audioRecorderPlayer.addPlayBackListener((e) => {
       if (e.currentPosition === e.duration) {
         setRecordState("play")
         this.audioRecorderPlayer.stopPlayer();
       }
-    //   this.setState({
-    //     currentPositionSec: e.current_position,
-    //     currentDurationSec: e.duration,
-    //     playTime: this.audioRecorderPlayer.mmssss(
-    //       Math.floor(e.current_position),
-    //     ),
-    //     duration: this.audioRecorderPlayer.mmssss(Math.floor(e.duration)),
-    //   });
     })
   };
 
