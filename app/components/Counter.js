@@ -6,47 +6,36 @@ import { useState } from "react";
 export default function Counter({
   recordState,
   maxSeconds,
-  setRecordState,
-  setAudioLength,
-  audioLength,
 }) {
   const [counter, setCounter] = useState(0);
+  const [countDownTimer, setCountDownTimer] = useState(3)
   const [counterText, setCounterText] = useState("Start");
 
   useEffect(() => {
+    
     // Count seconds
-    if (recordState == "record" || recordState == "pause") {
-      if (recordState == "record") {
-        if (counter < maxSeconds) {
-          zero = Math.floor((maxSeconds - counter) / 10) > 0 ? "" : "0";
-          setCounterText(`00:${zero}${maxSeconds - counter}`);
-          const timer = setInterval(() => setCounter(counter + 1), 1000);
-          return () => clearInterval(timer);
-        } else {
-          setRecordState("play");
-        }
-      } else {
-        if (counter < audioLength) {
-          zero = Math.floor(counter / 10) > 0 ? "" : "0";
-          setCounterText(`00:${zero}${counter}`);
-          const timer = setInterval(() => setCounter(counter + 1), 1000);
-          return () => clearInterval(timer);
-        } else {
-          setRecordState("play");
-        }
+    if (recordState == "record") {
+      if(countDownTimer >= 1){
+        setCounterText(`${countDownTimer} ...`)
+        const countDown = setInterval(() => setCountDownTimer(countDownTimer - 1), 1000);
+        return () => clearInterval(countDown);
       }
-      //If state changes to that is not record or pause
+      zero = Math.floor((maxSeconds - counter) / 10) > 0 ? "" : "0";
+      setCounterText(`00:${zero}${maxSeconds - counter}`);
+      const timer = setInterval(() => setCounter(counter + 1), 1000);
+      return () => clearInterval(timer);
+      //Pause state
+    } else if (recordState == "pause") {
+      zero = Math.floor(counter / 10) > 0 ? "" : "0";
+      setCounterText(`00:${zero}${counter}`);
+      const timer = setInterval(() => setCounter(counter + 1), 1000);
+      return () => clearInterval(timer);
     } else {
       setCounter(0);
     }
-  });
 
-  useEffect(() => {
-    if (recordState == "play" && audioLength == 0) {
-      console.log(counter)
-      setAudioLength(counter);
-    }
-  }, [recordState]);
+
+  });
 
   return (
     <View>

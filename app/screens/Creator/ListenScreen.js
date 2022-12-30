@@ -15,7 +15,7 @@ function ListenScreen(props) {
   const [isLoading, setIsLoading] = loading
 
   const refreshData = () => {
-    dbManager.getLookContent().then((contentData) => {
+    dbManager.getListenContent().then((contentData) => {
       setData(contentData);
     });
   };

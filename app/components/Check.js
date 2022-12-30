@@ -23,10 +23,10 @@ function Check(props) {
   const tikOpacValue = useRef(new Animated.Value(0)).current;
 
   const animatedValue = useRef(new Animated.Value(0)).current;
-  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+  const AnimatedCheck = Animated.createAnimatedComponent(Circle);
   const halfCircle = radius + strokeWidth;
   const circleCircumference = 2 * Math.PI * radius;
-  const circleRef = useRef();
+  const circleRefCheck = useRef();
 
   const animate = (toValue) => {
     return ( 
@@ -55,11 +55,11 @@ function Check(props) {
   useEffect(() => {
     animate(percentage);
     animatedValue.addListener((v) => {
-      if (circleRef?.current) {
+      if (circleRefCheck?.current) {
         const maxPercentage = (100 * v.value) / max;
         const strokeDashoffset =
           circleCircumference - (circleCircumference * maxPercentage) / 100;
-          circleRef.current.setNativeProps({
+          circleRefCheck.current.setNativeProps({
           strokeDashoffset,
         });
       }
@@ -106,7 +106,7 @@ function Check(props) {
               radius - tikWidth + 2
             } 5`}
             fill="none"
-            stroke={color}
+            stroke={"green"}
             strokeWidth={tikWidth}
             strokeLinecap="round"
             strokeOpacity={strokeOpacity}
@@ -121,12 +121,12 @@ function Check(props) {
         style={styles.tik}
       >
         <G rotation="90" origin={`${halfCircle}`}>
-          <AnimatedCircle
-            ref={circleRef}
+          <AnimatedCheck
+            ref={circleRefCheck}
             cx="50%"
             cy="50%"
             strokeWidth={strokeWidth}
-            stroke={color}
+            stroke={"green"}
             strokeOpacity={strokeOpacity}
             r={radius}
             fill="transparent"

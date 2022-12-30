@@ -1,35 +1,39 @@
 import database from "@react-native-firebase/database";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
+// import { updateMetadata, getMetadata } from "@react-native-firebase/storage";
 
 import { Platform } from "react-native";
+import { matrixTransform } from "react-native-svg/lib/typescript/elements/Shape";
 
-const noteTitle = "Custom Note Title"
-const lookTitle = "Custom Image Title"
-const listenTitle = "Custom Audio Title"
+const noteTitle = "Custom Note Title";
+const lookTitle = "Custom Image Title";
+const listenTitle = "Custom Audio Title";
 
 class DatabaseManager {
   constructor() {
     this.db = database();
     this.storage = storage();
   }
-  logOutCurrentUser(){
-    auth().signOut()
+  logOutCurrentUser() {
+    auth().signOut();
   }
-  async removeCurrentCreatorAccount(){
-    const user = auth().currentUser
-    const uid = user.uid
+  async removeCurrentCreatorAccount() {
+    const user = auth().currentUser;
+    const uid = user.uid;
     const code = await this.getCode();
-    this.db.ref(`content/${code}`).remove()
-    this.db.ref(`users/${uid}`).remove()
-    auth().signOut()
-    return user.delete()
+    this.db.ref(`content/${code}`).remove();
+    this.db.ref(`users/${uid}`).remove();
+    auth().signOut();
+    return user.delete();
   }
 
   // MARK: -  Content functions
-  async updateTitle(contentType, directory, newTitle){
+  async updateTitle(contentType, directory, newTitle) {
     const code = await this.getCode();
-    this.db.ref(`content/${code}/${contentType}/${directory}/title`).set(newTitle)
+    this.db
+      .ref(`content/${code}/${contentType}/${directory}/title`)
+      .set(newTitle);
   }
   async getNotesContent() {
     const code = await this.getCode();
@@ -104,26 +108,33 @@ class DatabaseManager {
     }
     return data;
   }
-  async updateLookImage(directory, imageName, imagePath){
+  async updateLookImage(directory, imageName, imagePath) {
     //This func deletes and adds/changes image
     const code = await this.getCode();
     let oldImageName = (
-      await this.db.ref(`content/${code}/lookContent/${directory}/content`).once("value")
-    ).val()
-    
+      await this.db
+        .ref(`content/${code}/lookContent/${directory}/content`)
+        .once("value")
+    ).val();
+
     //Update db
-    this.db.ref(`content/${code}/lookContent/${directory}/content`).set(imageName)
+    this.db
+      .ref(`content/${code}/lookContent/${directory}/content`)
+      .set(imageName);
 
     //UpdateStorage
     this.deleteStorageItem(oldImageName);
     //Only add image to storage if we are changing/adding image not deleting
-    if(imagePath != null){
-      const successUpload = await this.uploadToStorage(imagePath, imageName);
+    if (imagePath != null) {
+      const successUpload = await this.uploadToStorage(
+        "lookContent",
+        imagePath,
+        imageName
+      );
       return successUpload;
     }
-    return true
+    return true;
   }
-
   async getListenContent() {
     let data = [];
     const code = await this.getCode();
@@ -133,50 +144,83 @@ class DatabaseManager {
     const length = Object.entries(items).length;
 
     for (let i = 0; i < length; i++) {
-      let imageURL;
+      let audioURI;
+      let length;
 
       const item = Object.entries(items)[i];
       const title = item[1].title;
-      const imageName = item[1].content;
+      const audioName = item[1].content;
       const bucket = item[0];
-      const ref = this.storage.ref(`${code}/lookContent/${imageName}`);
+      const ref = this.storage.ref(`${code}/listenContent/${audioName}`);
 
       await ref
         .getDownloadURL()
         .then((url) => {
-          imageURL = url;
+          audioURI = url;  
         })
         .catch(() => {
-          imageURL = null;
+          audioURI = null;
         });
-
+        if(audioURI != null){
+          await ref.getMetadata().then((meta) => {
+            length = meta 
+          })
+        }
       data.push({
         number: 1 + i,
         bucket: bucket,
         title: title,
-        description: imageName,
-        content: imageURL,
+        description: audioName,
+        content: [audioURI, length],
         completed:
-          imageName != null && imageName != "" && title.trim() != lookTitle
+          audioName != null && audioName != "" && title.trim() != listenTitle
             ? true
             : false,
       });
     }
     return data;
   }
+  async updateListenContent(directory, name, filePath, audioLength) {
+    //This func deletes and adds/changes image
+    const code = await this.getCode();
+    let oldFileName = (
+      await this.db
+        .ref(`content/${code}/listenContent/${directory}/content`)
+        .once("value")
+    ).val();
 
-  // MARK: - Get info functions  
-  async getPaid(){
-    const UID = auth().currentUser.uid;
-    const paid = await this.db.ref(`users/${UID}/paid`).once('value')
-    return paid.val()
+     //Update db
+     this.db
+     .ref(`content/${code}/listenContent/${directory}/content`)
+     .set(name);
+
+    //UpdateStorage
+    this.deleteStorageItem("listenContent", oldFileName);
+    //Only add image to storage if we are changing/adding image not deleting
+    if (filePath != null) {
+      const successUpload = await this.uploadToStorage(
+        "listenContent",
+        filePath,
+        name,
+        {customMetadata: {length:String(audioLength)}}
+        )
+      return successUpload
+    }
+    return true;
   }
-  async getCodeIfPaid(){
+
+  // MARK: - Get info functions
+  async getPaid() {
     const UID = auth().currentUser.uid;
-    const paid = (await this.db.ref(`users/${UID}/paid`).once('value')).val()
-    if(paid == true){
-      const code = (await this.db.ref(`users/${UID}/code`).once('value')).val()
-      return code
+    const paid = await this.db.ref(`users/${UID}/paid`).once("value");
+    return paid.val();
+  }
+  async getCodeIfPaid() {
+    const UID = auth().currentUser.uid;
+    const paid = (await this.db.ref(`users/${UID}/paid`).once("value")).val();
+    if (paid == true) {
+      const code = (await this.db.ref(`users/${UID}/code`).once("value")).val();
+      return code;
     }
   }
   async getCode() {
@@ -313,20 +357,20 @@ class DatabaseManager {
   }
 
   //MARK: Storage Functions
-  async deleteStorageItem(name) {
+  async deleteStorageItem(contentType, name) {
     const code = await this.getCode();
-    const exists = await this.checkStorageForItem(name);
+    const exists = await this.checkStorageForItem(contentType, name);
 
     if (exists == true) {
-      this.storage.ref(`${code}/lookContent/${name}`).delete();
+      this.storage.ref(`${code}/${contentType}/${name}`).delete();
     }
   }
-  async checkStorageForItem(title) {
+  async checkStorageForItem(contentType, title) {
     let exists = false;
     const code = await this.getCode();
 
     await this.storage
-      .ref(`${code}/lookContent`)
+      .ref(`${code}/${contentType}`)
       .listAll()
       .then((result) => {
         if (result != null) {
@@ -341,12 +385,12 @@ class DatabaseManager {
       });
     return exists;
   }
-  async uploadToStorage(path, name) {
+  async uploadToStorage(contentType, path, name, metadata = null) {
     let success;
     const code = await this.getCode();
 
-    const ref = this.storage.ref(`${code}/lookContent/${name}`);
-    const task = ref.putFile(path);
+    const ref = this.storage.ref(`${code}/${contentType}/${name}`);
+    const task = ref.putFile(path, metadata);
     await task
       .then(() => {
         success = true;

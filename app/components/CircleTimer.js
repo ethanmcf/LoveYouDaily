@@ -11,8 +11,8 @@ color = colors.secondary;
 max = 100;
 strokeOpacity = 1;
 
-function CircleTimer({ seconds, recordState, audioLength }) {
-  const [currentProgress, setCurrentProgress] = useState(0);
+function CircleTimer({ seconds, recordState, audioLength}) {
+
   const duration = seconds * 1000;
   const animatedValue = useRef(new Animated.Value(0)).current;
   const animatedValue2 = useRef(new Animated.Value(0)).current;
@@ -21,18 +21,22 @@ function CircleTimer({ seconds, recordState, audioLength }) {
   const AnimatedCircle2 = Animated.createAnimatedComponent(Circle);
   const halfCircle = radius + strokeWidth;
   const circleCircumference = 2 * Math.PI * radius;
+  const savedProgress = (audioLength)/seconds * circleCircumference
+  const [currentProgress, setCurrentProgress] = useState(savedProgress);
   const circleRef1 = useRef();
   const circleRef2 = useRef();
 
   const animate = (toValue) => {
     return Animated.timing(animatedValue, {
+      delay: 3100,
       toValue: toValue,
-      duration: duration  - 100,
+      duration: duration - 100,
       useNativeDriver: true,
     });
   };
   const animate2 = (toValue) => {
     return Animated.timing(animatedValue2, {
+      delay: 800,
       toValue: toValue,
       duration: audioLength * 1000 - 100,
       useNativeDriver: true,
@@ -130,7 +134,7 @@ function CircleTimer({ seconds, recordState, audioLength }) {
             cy="50%"
             strokeWidth={strokeWidth}
             stroke={color}
-            strokeOpacity={recordState == "record" ? 0 : strokeOpacity}
+            strokeOpacity={recordState == "record" || recordState == null ? 0 : strokeOpacity}
             r={radius}
             strokeDashoffset={circleCircumference - currentProgress}
             strokeDasharray={circleCircumference}

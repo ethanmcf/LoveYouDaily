@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -8,7 +8,7 @@ import {
   Animated,
   Dimensions,
   TextInput,
-  Alert
+  Alert,
 } from "react-native";
 import { button, colors, shadow, titleFont } from "../../common/styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -22,15 +22,27 @@ import { translateToValue } from "../../common/values";
 import dbManager from "../../management/database-manager";
 import React from "react";
 import Counter from "../Counter";
+import audioManager from "../../management/audio-manager";
+import { AppContext } from "../../management/globals";
+
 function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
-  const maxSeconds = 20;
+  const maxSeconds = 5;
   const translateValue = useRef(new Animated.Value(0)).current;
   const visualizeOpacityValue = useRef(new Animated.Value(0)).current;
   const playButtonValue = useRef(new Animated.Value(0)).current;
-  const [recordState, setRecordState] = useState(null); //null, record, play, pause
-  const [audioLength, setAudioLength] = useState(0);
+  const [recordState, setRecordState] = useState(
+    data.content[0] != null ? "play" : null
+  ); //null, record, play, pause
+  const [audioLength, setAudioLength] = useState(
+    data.content[1] != null ? data.content[1].customMetadata.length : 0
+  );
   const [showPopUp, setShowPopUp] = useState(false);
-  const [currentTitle, setCurrentTitle] = useState(data.title.trim())
+  const [currentTitle, setCurrentTitle] = useState(data.title.trim());
+  const [filePath, setFilePath] = useState(data.content[0]);
+
+  const { signing, successful, loading } = useContext(AppContext);
+  const [success, setSucces] = successful;
+
 
   const popUp = () => {
     if (showPopUp == true) {
@@ -98,17 +110,73 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
     //Visualization Animation
     if (recordState == "pause") {
       visualizationAnim(true);
-    } else{
+    } else {
       visualizationAnim(false);
     }
+    //Record functionality
+    if (recordState == "record") {
+      setTimeout(() => {
+        audioManager
+        .onStartRecord("test", setRecordState, maxSeconds, setAudioLength)
+        .then((path) => {
+          setFilePath(path);
+        });
+      }, 3500)
+    } else if (recordState == "play") {
+      if (audioLength == 0) {
+        audioManager.onStopRecord(setAudioLength);
+      } else {
+        audioManager.onStopPlay();
+      }
+    } else if (recordState == "pause") {
+      audioManager.onStartPlay(filePath, setRecordState);
+    }
   }, [recordState]);
+
+  const handleDelete = () => {
+    setFilePath(null);
+    setRecordState(null);
+    audioManager.onStopPlay();
+    setAudioLength(0);
+  };
+
+  const handleSave = () => {
+    if (currentTitle.length > 21) {
+      Alert.alert("Title Issue", "Each title must be less than 21 characters!");
+    } else if (currentTitle.length == 0) {
+      Alert.alert(
+        "Title Issue",
+        "Each title must contain at least one character!"
+      );
+      // Title is proper so db can be updated
+    } else {
+      directory = data.bucket;
+      dbManager.updateTitle("listenContent", directory, currentTitle);
+      dbManager
+        .updateListenContent(directory, "testing", filePath, audioLength)
+        .then((success) => {
+          if (success == false) {
+            Alert.alert(
+              "Error",
+              "There was an issue uploading your image, please try again later."
+            );
+            handleDelete();
+            return; //cut function off
+          }
+        });
+      setSucces(true);
+      setTimeout(() => {
+        refreshData();
+      }, 2000);
+    }
+  };
 
   const handleTemplate = () => {
     dbManager.getTemplate("listenContent", number).then((template) => {
       setCurrentTitle(template.title);
-      Alert.alert("Audio Message",template.content)
+      Alert.alert("Audio Message", template.content);
     });
-  }
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -212,7 +280,11 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
         />
 
         <Animated.View style={styles.recordContainer}>
-          <CircleTimer seconds={maxSeconds} recordState={recordState} audioLength={audioLength}/>
+          <CircleTimer
+            seconds={maxSeconds}
+            recordState={recordState}
+            audioLength={audioLength}
+          />
           <View>
             <RecordVoiceButton
               recordState={recordState}
@@ -225,13 +297,7 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
                   : "mic"
               }
             />
-            <Counter
-              maxSeconds={maxSeconds}
-              recordState={recordState}
-              setRecordState={setRecordState}
-              setAudioLength={setAudioLength}
-              audioLength = {audioLength}
-            />
+            <Counter maxSeconds={maxSeconds} recordState={recordState} />
           </View>
 
           <Animated.View style={styles.visualizerContainer}>
@@ -267,7 +333,7 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
         <TouchableOpacity
           style={styles.clearButton}
           onPress={() => {
-            setRecordState(null);
+            handleDelete();
           }}
         >
           <MaterialIcons name="clear" size={23} color={colors.red} />
