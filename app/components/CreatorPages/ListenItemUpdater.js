@@ -140,11 +140,29 @@ function ListenItemUpdater({ setIsSelected, data, number, refreshData }) {
   }, [recordState]);
 
   const handleDelete = () => {
-    setFilePath(null);
-    setRecordState(null);
+    rootDirectory = data.bucket
     audioManager.onStopPlay();
-    setAudioLength(0);
-    setFileName(null);
+    setRecordState(null);
+    dbManager
+      .updateListenContent(rootDirectory, null, null)
+      .then((successDelete) => {
+        if(successDelete == true){
+          setFilePath(null);
+          setAudioLength(0);
+          setFileName(null);
+          refreshData();
+          setSucces(true);
+          setTimeout(() => {
+            refreshData();
+          }, 2000);
+        }else{
+          Alert.alert(
+            "Error",
+            "There was an issue removing your image, please try again later."
+          );
+        }
+      })
+
   };
 
   const handleSave = () => {

@@ -13,6 +13,7 @@ import { colors } from "../../common/styles";
 function PlayButton({ recordState, setState, icon }) {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const innerCircleAmin = useRef(new Animated.Value(1)).current;
+  const [countingDown, setCountingDown] = useState(false)
 
   useEffect(() => {
     // console.log("changed", recordState)
@@ -31,6 +32,10 @@ function PlayButton({ recordState, setState, icon }) {
   const beforeRecordingAnim = () => {
     return Animated.sequence([
       Animated.delay(3000),
+      {start: cb => {
+        setCountingDown(false)
+        cb({finished: true})
+      }},
       Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
@@ -51,10 +56,13 @@ function PlayButton({ recordState, setState, icon }) {
   const handleStateChange = () => {
     if (recordState == null) {
       setState("record");
+      setCountingDown(true)
     } else if (recordState == "play") {
         setState("pause");
     } else {
-      setState("play");
+      if(countingDown == false){
+        setState("play");
+      }
     }
   };
 
@@ -87,6 +95,7 @@ function PlayButton({ recordState, setState, icon }) {
     <TouchableOpacity
       onPress={() => handleStateChange()}
       style={styles.container}
+      disabled={countingDown}
     >
       <Animated.View style={styles.largeCircle} />
 
