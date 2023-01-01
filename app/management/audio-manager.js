@@ -5,14 +5,17 @@ import AudioRecorderPlayer, {
   AudioSet,
   AudioSourceAndroidType,
 } from "react-native-audio-recorder-player";
+import { PermissionsAndroid } from "react-native";
+import { Platform } from "react-native";
+
 
 class AudioManager {
   constructor() {
     this.timeInSeconds = 0
     this.audioRecorderPlayer = new AudioRecorderPlayer();
   }
-  onStartRecord = async (title, setRecordState, maxTime, setAudioLength) => {
-    const path = `${title}.m4a`;
+  onStartRecord = async (title, setRecordState, maxTime, setAudioLength) => {  
+    const path = `${title}.m4a`
     const audioSet = {
       AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
       AudioSourceAndroid: AudioSourceAndroidType.MIC,
@@ -29,6 +32,7 @@ class AudioManager {
         setAudioLength(maxTime)
       }
     });
+    console.log(uri)
     return uri
   };
 

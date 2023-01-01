@@ -67,7 +67,6 @@ function LoadSpinner(props) {
       backgroundColor: COLOR
     }
   });
-  console.log(Dimensions.get("screen").width, Platform.OS)
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.circle, {opacity: circleOpacity1}]}/>
