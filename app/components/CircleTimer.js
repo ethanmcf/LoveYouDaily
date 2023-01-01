@@ -4,20 +4,20 @@ import Svg, { G, Circle, Polyline, Path } from "react-native-svg";
 import React from "react";
 import { colors } from "../common/styles";
 //Circle
-radius = 130;
-strokeWidth = 17;
-percentage = 85;
-color = colors.secondary;
-max = 100;
-strokeOpacity = 1;
+const radius = 130;
+const strokeWidth = 17;
+const percentage = 85;
+const color = colors.secondary;
+const max = 100;
+const strokeOpacity = 1;
 
 function CircleTimer({ seconds, recordState, audioLength, needDelay}) {
   const duration = seconds * 1000;
   const animatedValue = useRef(new Animated.Value(0)).current;
   const animatedValue2 = useRef(new Animated.Value(0)).current;
 
-  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-  const AnimatedCircle2 = Animated.createAnimatedComponent(Circle);
+  const AnimatedCircle = useRef(new Animated.createAnimatedComponent(Circle)).current
+  const AnimatedCircle2 = useRef(new Animated.createAnimatedComponent(Circle)).current
   const halfCircle = radius + strokeWidth;
   const circleCircumference = 2 * Math.PI * radius;
   const savedProgress = (audioLength)/seconds * circleCircumference

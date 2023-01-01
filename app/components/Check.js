@@ -3,18 +3,15 @@ import { View, StyleSheet, Animated, Dimensions } from "react-native";
 import Svg, { G, Circle, Polyline, Path } from "react-native-svg";
 import React from 'react'
 //Circle
-radius = 35;
-strokeWidth = 8;
-percentage = -100;
-color = "green";
-max = 100;
-duration = 1000;
-strokeOpacity = 0.5;
+const radius = 35;
+const strokeWidth = 8;
+const percentage = -100;
+const max = 100;
+const duration = 1000;
+const strokeOpacity = 0.5;
 
 //Tik
-tikWidth = 6;
-tikPercent = 100;
-tikMax = 100;
+const tikWidth = 6;
 
 function Check(props) {
   const checkFadeValue = useRef(new Animated.Value(1)).current;
@@ -23,12 +20,12 @@ function Check(props) {
   const tikOpacValue = useRef(new Animated.Value(0)).current;
 
   const animatedValue = useRef(new Animated.Value(0)).current;
-  const AnimatedCheck = Animated.createAnimatedComponent(Circle);
+  const AnimatedCheck = useRef(new Animated.createAnimatedComponent(Circle)).current;
   const halfCircle = radius + strokeWidth;
   const circleCircumference = 2 * Math.PI * radius;
   const circleRefCheck = useRef();
 
-  const animate = (toValue) => {
+  const animated = (toValue) => {
     return ( 
       Animated.sequence([
         Animated.timing(dimBackgroundValue, {
@@ -53,7 +50,7 @@ function Check(props) {
   };
 
   useEffect(() => {
-    animate(percentage);
+    animated(percentage);
     animatedValue.addListener((v) => {
       if (circleRefCheck?.current) {
         const maxPercentage = (100 * v.value) / max;
